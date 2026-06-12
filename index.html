@@ -155,29 +155,59 @@
 </nav>
 
 <!-- Hero Section -->
-<section class="relative pt-32 pb-20 px-4 overflow-hidden">
-  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.08),transparent_50%)]"></div>
-  <div class="max-w-7xl mx-auto relative">
-    <div class="text-center max-w-3xl mx-auto animate-fade-in">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-sm mb-6">
-        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-        数据实时更新至 2026年6月
-      </div>
-      <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-        <span class="text-gradient">核电电力市场</span><br>
-        <span class="text-white">政策解读与数据分析平台</span>
+<section class="relative min-h-[85vh] flex items-center overflow-hidden">
+  <!-- Background Image -->
+  <div class="absolute inset-0 z-0">
+    <img src="https://images.unsplash.com/photo-1532601224476-15c79f2f7d51?w=1920&q=80" alt="nuclear power plant" class="w-full h-full object-cover" onerror="this.parentElement.style.background='linear-gradient(to bottom, #1e3a5f, #0f172a)'" />
+    <div class="absolute inset-0 bg-gradient-to-b from-[#0f172a]/70 via-[#0f172a]/60 to-[#0f172a]/95"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10 pt-20 pb-12">
+    <div class="animate-fade-in">
+      <!-- English Tag -->
+      <p class="text-sky-400/80 text-sm tracking-[0.2em] uppercase mb-4 font-light">Nuclear Power Market Intelligence</p>
+      
+      <!-- Main Title -->
+      <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight mb-4">
+        核电市场<br>
+        <span class="text-white">数据洞察平台</span>
       </h1>
-      <p class="text-lg text-slate-400 mb-8 leading-relaxed">
-        聚焦中国核电入市进程，追踪电力中长期交易、现货市场、容量电价机制等核心政策，
-        覆盖江苏、福建、广东、浙江等核电大省的电力市场动态。
+      
+      <!-- Subtitle -->
+      <p class="text-lg text-slate-300 mb-8 max-w-2xl leading-relaxed">
+        专注核电电力市场政策解读、市场交易数据分析与行业深度研究
       </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <a href="#data" class="px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white rounded-lg font-medium transition-all shadow-lg shadow-sky-500/20">
-          查看核心数据
-        </a>
-        <a href="#timeline" class="px-6 py-3 glass text-slate-300 hover:text-white rounded-lg font-medium transition-all hover:border-sky-500/30">
-          政策时间线
-        </a>
+      
+      <!-- Search Box -->
+      <div class="flex flex-col sm:flex-row gap-3 max-w-2xl mb-12">
+        <div class="flex-1 flex items-center px-4 py-3 bg-slate-800/50 border border-slate-600/30 rounded-lg backdrop-blur-sm">
+          <svg class="w-5 h-5 text-slate-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <input type="text" placeholder="搜索核电政策、市场法规或行业关键词..." class="bg-transparent text-white placeholder-slate-400 outline-none w-full text-sm">
+        </div>
+        <button class="px-6 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-medium transition-all text-sm flex items-center justify-center gap-2">
+          <span>搜索</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+      </div>
+      
+      <!-- Key Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl">
+        <div>
+          <div class="text-4xl md:text-5xl font-bold text-white">112<span class="text-2xl text-slate-400">台</span></div>
+          <div class="text-slate-400 text-sm mt-1">追踪核电机组</div>
+        </div>
+        <div>
+          <div class="text-4xl md:text-5xl font-bold text-white">300<span class="text-2xl text-slate-400">+</span></div>
+          <div class="text-slate-400 text-sm mt-1">收录政策法规</div>
+        </div>
+        <div>
+          <div class="text-4xl md:text-5xl font-bold text-white">8<span class="text-2xl text-slate-400">个</span></div>
+          <div class="text-slate-400 text-sm mt-1">覆盖省份</div>
+        </div>
+        <div>
+          <div class="text-4xl md:text-5xl font-bold text-white">50<span class="text-2xl text-slate-400">+</span></div>
+          <div class="text-slate-400 text-sm mt-1">市场数据指标</div>
+        </div>
       </div>
     </div>
   </div>
