@@ -3,1054 +3,633 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>核市观 - 核电电力市场政策解读与数据分析平台</title>
-<meta name="description" content="核市观是国内领先的核电电力市场信息平台，专注核电电力市场政策解读、市场交易数据分析与行业深度研究，覆盖江苏、福建、广东、浙江等核电省份的政策法规及国际核电动态。">
+<title>核市观 - Nuclear Market Watch | 核电电力市场政策解读与数据分析</title>
+<meta name="description" content="核市观是国内领先的核电电力市场信息平台，专注核电电力市场政策解读、市场交易数据分析与行业深度研究，覆盖江苏、福建、广东、浙江等8个核电省份的政策法规及国际核电动态。">
 <meta name="keywords" content="核电,电力市场,核电政策,电力交易,核电装机,核电入市,容量电价,电力现货,中长期交易,核电市场">
 <meta name="author" content="核市观 Nuclear Market Watch">
-<meta property="og:title" content="核市观 - 核电电力市场政策解读与数据分析平台">
+<meta property="og:title" content="核市观 - Nuclear Market Watch | 核电电力市场政策解读与数据分析">
 <meta property="og:description" content="核市观是国内领先的核电电力市场信息平台，专注核电电力市场政策解读、市场交易数据分析与行业深度研究。">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E☢%3C/text%3E%3C/svg%3E">
-<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
-<style type="text/tailwindcss">
-@layer base {
-  :root {
-    --primary: #0f172a;
-    --accent: #0ea5e9;
-    --accent-glow: rgba(14,165,233,0.15);
-    --surface: rgba(15,23,42,0.6);
-    --border: rgba(148,163,184,0.1);
-  }
-  body {
-    background: #0a0b0c;
-    color: #e2e8f0;
-    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
+<style>
+  html { background-color: #0a0b0c; scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; color: #e8e6e3; -webkit-font-smoothing: antialiased; line-height: 1.6; }
+  *, *::before, *::after { box-sizing: border-box; }
+  a { text-decoration: none; color: inherit; transition: color 0.2s; }
+  a:hover { color: #c9a96e; }
+  img { max-width: 100%; display: block; }
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: #0a0b0c; }
-  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #475569; }
-}
-@layer components {
-  .glass {
-    background: var(--surface);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border);
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #444; }
+  
+  .animate-fade-in { opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
+  .animate-fade-in.visible { opacity: 1; transform: translateY(0); }
+  
+  .tag { font-size: 11px; border: 1px solid rgba(201,169,110,0.25); padding: 2px 8px; border-radius: 2px; color: rgba(201,169,110,0.7); display: inline-block; }
+  .tag-blue { border-color: rgba(110,138,173,0.3); color: rgba(110,138,173,0.8); }
+  .tag-green { border-color: rgba(122,173,110,0.3); color: rgba(122,173,110,0.8); }
+  .tag-rose { border-color: rgba(173,122,110,0.3); color: rgba(173,122,110,0.8); }
+  .tag-purple { border-color: rgba(155,122,173,0.3); color: rgba(155,122,173,0.8); }
+  .tag-orange { border-color: rgba(201,169,110,0.3); color: rgba(201,169,110,0.8); }
+  
+  .section-label { font-size: 12px; color: #c9a96e; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+  .section-title { font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 700; color: #e8e6e3; letter-spacing: -0.02em; margin: 0; line-height: 1.15; }
+  .section-desc { font-size: 14px; color: rgba(232,230,227,0.45); max-width: 520px; margin-top: 1rem; line-height: 1.7; }
+  .card-block { background-color: #141517; border: 1px solid rgba(232,230,227,0.06); transition: all 0.25s; }
+  .card-block:hover { background-color: #1a1b1e; }
+  
+  .btn-primary { font-size: 13px; color: #0a0b0c; background-color: #c9a96e; padding: 7px 22px; border-radius: 2px; font-weight: 500; display: inline-block; letter-spacing: 0.02em; border: none; cursor: pointer; }
+  .btn-primary:hover { background-color: #d4b47a; color: #0a0b0c; }
+  .btn-outline { font-size: 13px; color: #c9a96e; border: 1px solid rgba(201,169,110,0.4); padding: 10px 28px; border-radius: 2px; display: inline-block; letter-spacing: 0.02em; }
+  .btn-outline:hover { background-color: rgba(201,169,110,0.08); color: #c9a96e; }
+  
+  .detail-panel { display: none; background-color: #141517; border: 1px solid rgba(232,230,227,0.06); padding: 1.5rem; margin-top: 1rem; }
+  .detail-panel.active { display: block; animation: fadeInDown 0.4s ease-out; }
+  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .table-container { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 12px 8px; font-size: 13px; color: rgba(232,230,227,0.45); font-weight: 500; border-bottom: 1px solid rgba(232,230,227,0.08); }
+  td { padding: 12px 8px; font-size: 13px; color: rgba(232,230,227,0.6); border-bottom: 1px solid rgba(232,230,227,0.04); }
+  tr:hover td { background-color: rgba(255,255,255,0.02); }
+  
+  @media (max-width: 768px) {
+    .hide-mobile { display: none; }
+    .section-title { font-size: 1.5rem; }
   }
-  .glow-border {
-    position: relative;
-  }
-  .glow-border::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(14,165,233,0.3), transparent 40%, transparent 60%, rgba(14,165,233,0.1));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-  .text-gradient {
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9, #22d3ee);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-out forwards;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .card-hover {
-    transition: all 0.3s ease;
-  }
-  .card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -12px rgba(14,165,233,0.15);
-    border-color: rgba(14,165,233,0.3);
-  }
-  .tag {
-    @apply px-2 py-0.5 rounded-full text-xs font-medium;
-  }
-  .tag-blue { @apply bg-sky-500/10 text-sky-400 border border-sky-500/20; }
-  .tag-green { @apply bg-emerald-500/10 text-emerald-400 border border-emerald-500/20; }
-  .tag-amber { @apply bg-amber-500/10 text-amber-400 border border-amber-500/20; }
-  .tag-rose { @apply bg-rose-500/10 text-rose-400 border border-rose-500/20; }
-  .tag-purple { @apply bg-purple-500/10 text-purple-400 border border-purple-500/20; }
-  .tag-orange { @apply bg-orange-500/10 text-orange-400 border border-orange-500/20; }
-  .timeline-line {
-    position: absolute;
-    left: 24px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, #0ea5e9, #22d3ee, #10b981);
-  }
-  .timeline-dot {
-    position: absolute;
-    left: 18px;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #0ea5e9;
-    border: 3px solid #0a0b0c;
-    z-index: 10;
-  }
-  .subscribe-btn {
-    background: linear-gradient(135deg, #0ea5e9, #22d3ee);
-    transition: all 0.3s ease;
-  }
-  .subscribe-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px -5px rgba(14,165,233,0.4);
-  }
-}
 </style>
 </head>
-<body class="min-h-screen">
+<body>
 
-<!-- Navigation -->
-<nav class="fixed top-0 w-full z-50 glass border-b border-slate-800/50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <div class="flex items-center gap-3">
-        <span class="text-2xl">☢</span>
-        <div>
-          <h1 class="text-lg font-bold text-white tracking-tight">核市观</h1>
-          <p class="text-[10px] text-slate-400 -mt-1">Nuclear Market Watch</p>
-        </div>
+<!-- ==================== HERO SECTION ==================== -->
+<section id="hero" style="position: relative; width: 100%; min-height: 100vh; overflow: hidden; display: flex; flex-direction: column;">
+  <div style="position: absolute; inset: 0; z-index: 1;">
+    <img alt="秦山核电站全景" src="https://images.unsplash.com/photo-1532601224476-15c79f2f7d51?w=1920&q=80" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(rgba(10,11,12,0.55) 0%, rgba(10,11,12,0.25) 35%, rgba(10,11,12,0.6) 75%, rgb(10,11,12) 100%);"></div>
+    <div style="position: absolute; inset: 0; background: radial-gradient(transparent 25%, rgba(10,11,12,0.5) 100%);"></div>
+  </div>
+  
+  <!-- Navigation -->
+  <nav style="position: relative; z-index: 50; padding: 0 3rem; height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid transparent;">
+    <div style="display: flex; align-items: center; gap: 3rem;">
+      <a href="#" style="font-size: 20px; font-weight: 600; color: #e8e6e3; letter-spacing: 0.08em;">核市观</a>
+      <div class="hide-mobile" style="display: flex; gap: 2rem;">
+        <a href="#hero" style="font-size: 14px; color: rgba(232,230,227,0.55); letter-spacing: 0.02em;">首页</a>
+        <a href="#policy" style="font-size: 14px; color: rgba(232,230,227,0.55); letter-spacing: 0.02em;">政策法规</a>
+        <a href="#data" style="font-size: 14px; color: rgba(232,230,227,0.55); letter-spacing: 0.02em;">市场数据</a>
+        <a href="#provinces" style="font-size: 14px; color: rgba(232,230,227,0.55); letter-spacing: 0.02em;">省份动态</a>
+        <a href="#analysis" style="font-size: 14px; color: rgba(232,230,227,0.55); letter-spacing: 0.02em;">深度分析</a>
+        <a href="#overview" style="font-size: 14px; color: rgba(232,230,227,0.55); letter-spacing: 0.02em;">全球概览</a>
       </div>
-      <div class="hidden md:flex items-center gap-8 text-sm text-slate-300">
-        <a href="#overview" class="hover:text-sky-400 transition-colors">市场概览</a>
-        <a href="#timeline" class="hover:text-sky-400 transition-colors">政策时间线</a>
-        <a href="#data" class="hover:text-sky-400 transition-colors">核心数据</a>
-        <a href="#provinces" class="hover:text-sky-400 transition-colors">省份动态</a>
-        <a href="#global" class="hover:text-sky-400 transition-colors">全球动态</a>
-        <a href="#analysis" class="hover:text-sky-400 transition-colors">深度分析</a>
-        <a href="#subscribe" class="hover:text-sky-400 transition-colors">订阅</a>
-      </div>
-      <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden text-slate-300">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-      </button>
+    </div>
+    <div class="hide-mobile" style="display: flex; gap: 1.5rem; align-items: center;">
+      <a href="#" style="font-size: 14px; color: rgba(232,230,227,0.5);">登录</a>
+      <a href="#" class="btn-primary">注册</a>
+    </div>
+  </nav>
+  
+  <!-- Search Bar -->
+  <div style="position: relative; z-index: 40; display: flex; align-items: center; padding: 0.875rem 3rem; border-bottom: 1px solid rgba(232,230,227,0.06); gap: 0.75rem; flex-shrink: 0;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(232,230,227,0.4)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input placeholder="搜索核电政策、市场法规或行业关键词..." type="text" style="flex: 1; background: transparent; border: none; outline: none; color: #e8e6e3; font-size: 14px; font-family: inherit;">
+    <button class="btn-primary">搜索</button>
+  </div>
+  
+  <!-- Hero Content -->
+  <div style="position: relative; z-index: 10; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 3rem 5rem; min-height: 0;">
+    <div style="max-width: 720px;">
+      <div style="display: inline-block; font-size: 12px; color: #c9a96e; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(201,169,110,0.4); padding-bottom: 0.5rem;">Nuclear Power Market Intelligence</div>
+      <h1 style="font-size: clamp(2.8rem, 5.5vw, 4.5rem); font-weight: 700; color: #e8e6e3; line-height: 1.1; letter-spacing: -0.02em; margin: 0;">核电市场<br>数据洞察平台</h1>
+      <p style="font-size: 16px; color: rgba(232,230,227,0.6); line-height: 1.8; margin-top: 1.5rem; max-width: 520px;">专注核电电力市场政策解读、市场交易数据分析与行业深度研究</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, auto); gap: 4rem; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid rgba(232,230,227,0.08);">
+      <div><div style="display: flex; align-items: baseline; gap: 0.25rem;"><span style="font-size: 36px; font-weight: 300; color: #c9a96e; line-height: 1;">112</span><span style="font-size: 16px; color: #c9a96e;">台</span></div><div style="font-size: 13px; color: rgba(232,230,227,0.45); margin-top: 0.5rem;">追踪核电机组</div></div>
+      <div><div style="display: flex; align-items: baseline; gap: 0.25rem;"><span style="font-size: 36px; font-weight: 300; color: #c9a96e; line-height: 1;">300</span><span style="font-size: 16px; color: #c9a96e;">+</span></div><div style="font-size: 13px; color: rgba(232,230,227,0.45); margin-top: 0.5rem;">收录政策法规</div></div>
+      <div><div style="display: flex; align-items: baseline; gap: 0.25rem;"><span style="font-size: 36px; font-weight: 300; color: #c9a96e; line-height: 1;">8</span><span style="font-size: 16px; color: #c9a96e;">个</span></div><div style="font-size: 13px; color: rgba(232,230,227,0.45); margin-top: 0.5rem;">覆盖省份</div></div>
+      <div><div style="display: flex; align-items: baseline; gap: 0.25rem;"><span style="font-size: 36px; font-weight: 300; color: #c9a96e; line-height: 1;">50</span><span style="font-size: 16px; color: #c9a96e;">+</span></div><div style="font-size: 13px; color: rgba(232,230,227,0.45); margin-top: 0.5rem;">市场数据指标</div></div>
     </div>
   </div>
-  <div id="mobile-menu" class="hidden md:hidden glass border-t border-slate-800/50">
-    <div class="px-4 py-3 space-y-2 text-sm text-slate-300">
-      <a href="#overview" class="block py-2 hover:text-sky-400">市场概览</a>
-      <a href="#data" class="block py-2 hover:text-sky-400">核心数据</a>
-      <a href="#timeline" class="block py-2 hover:text-sky-400">政策时间线</a>
-      <a href="#provinces" class="block py-2 hover:text-sky-400">省份动态</a>
-      <a href="#global" class="block py-2 hover:text-sky-400">全球动态</a>
-      <a href="#analysis" class="block py-2 hover:text-sky-400">深度分析</a>
-      <a href="#subscribe" class="block py-2 hover:text-sky-400">订阅</a>
+</section>
+
+<!-- ==================== DOMESTIC POLICY ==================== -->
+<section id="policy" style="background-color: #0a0b0c; min-height: 100vh; display: flex; align-items: center; overflow: hidden; position: relative; padding: 6rem 0;">
+  <div style="width: 100%; max-width: 1400px; margin: 0 auto; display: flex; gap: 1.5rem; padding: 0 3rem;">
+    <div style="width: 35%; min-width: 300px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center;">
+      <p class="section-label">Domestic Policy</p>
+      <h2 class="section-title">国内政策法规动态</h2>
+      <p class="section-desc">实时追踪全国8个核电省份及国家级电力市场政策变化，深度解读影响核电运营与交易的关键法规</p>
+      <div style="margin-top: 2rem;"><a href="#" class="btn-outline">查看全部政策</a></div>
     </div>
-  </div>
-</nav>
-
-<!-- Hero Section -->
-<section class="relative min-h-[85vh] flex items-center overflow-hidden">
-  <!-- Background Image -->
-  <div class="absolute inset-0 z-0">
-    <img src="https://images.unsplash.com/photo-1532601224476-15c79f2f7d51?w=1920&q=80" alt="nuclear power plant" class="w-full h-full object-cover" onerror="this.parentElement.style.background='linear-gradient(to bottom, #1e3a5f, #0f172a)'" />
-    <div class="absolute inset-0 bg-gradient-to-b from-[#0f172a]/70 via-[#0f172a]/60 to-[#0f172a]/95"></div>
-  </div>
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10 pt-20 pb-12">
-    <div class="animate-fade-in">
-      <!-- English Tag -->
-      <p class="text-sky-400/80 text-sm tracking-[0.2em] uppercase mb-4 font-light">Nuclear Power Market Intelligence</p>
-      
-      <!-- Main Title -->
-      <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight mb-4">
-        核电市场<br>
-        <span class="text-white">数据洞察平台</span>
-      </h1>
-      
-      <!-- Subtitle -->
-      <p class="text-lg text-slate-300 mb-8 max-w-2xl leading-relaxed">
-        专注核电电力市场政策解读、市场交易数据分析与行业深度研究
-      </p>
-      
-      <!-- Search Box -->
-      <div class="flex flex-col sm:flex-row gap-3 max-w-2xl mb-12">
-        <div class="flex-1 flex items-center px-4 py-3 bg-slate-800/50 border border-slate-600/30 rounded-lg backdrop-blur-sm">
-          <svg class="w-5 h-5 text-slate-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          <input type="text" placeholder="搜索核电政策、市场法规或行业关键词..." class="bg-transparent text-white placeholder-slate-400 outline-none w-full text-sm">
+    <div style="display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: none;">
+      <div class="card-block" style="min-width: 360px; max-width: 360px; cursor: pointer;">
+        <div style="width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #1a2a3a, #0a1a2a);"></div>
+        <div style="padding: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span style="font-size: 12px; color: rgba(232,230,227,0.35);">2025-09-01</span>
+            <span class="tag">政策</span>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 600; color: #e8e6e3; line-height: 1.45; margin: 0;">江苏省电力现货市场启动连续结算试运行</h3>
+          <p style="font-size: 13px; color: rgba(232,230,227,0.4); line-height: 1.65; margin-top: 0.75rem;">江苏核电厂等省内发电企业全部参与现货市场，电能量申报价格上限1500元/兆瓦时。</p>
         </div>
-        <button class="px-6 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-medium transition-all text-sm flex items-center justify-center gap-2">
-          <span>搜索</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-        </button>
       </div>
-      
-      <!-- Key Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl">
-        <div>
-          <div class="text-4xl md:text-5xl font-bold text-white">112<span class="text-2xl text-slate-400">台</span></div>
-          <div class="text-slate-400 text-sm mt-1">追踪核电机组</div>
+      <div class="card-block" style="min-width: 360px; max-width: 360px; cursor: pointer;">
+        <div style="width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #1a3a2a, #0a2a1a);"></div>
+        <div style="padding: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span style="font-size: 12px; color: rgba(232,230,227,0.35);">2025-12-09</span>
+            <span class="tag">政策</span>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 600; color: #e8e6e3; line-height: 1.45; margin: 0;">2026年福建省电力中长期市场交易方案发布</h3>
+          <p style="font-size: 13px; color: rgba(232,230,227,0.4); line-height: 1.65; margin-top: 0.75rem;">福清、宁德、漳州核电全部纳入中长期市场，交易电量预测700-800亿千瓦时。</p>
         </div>
-        <div>
-          <div class="text-4xl md:text-5xl font-bold text-white">300<span class="text-2xl text-slate-400">+</span></div>
-          <div class="text-slate-400 text-sm mt-1">收录政策法规</div>
+      </div>
+      <div class="card-block" style="min-width: 360px; max-width: 360px; cursor: pointer;">
+        <div style="width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #3a2a1a, #2a1a0a);"></div>
+        <div style="padding: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span style="font-size: 12px; color: rgba(232,230,227,0.35);">2025-10-21</span>
+            <span class="tag">政策</span>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 600; color: #e8e6e3; line-height: 1.45; margin: 0;">广东核电变动成本补偿机制正式取消</h3>
+          <p style="font-size: 13px; color: rgba(232,230,227,0.4); line-height: 1.65; margin-top: 0.75rem;">广东省明确2026年度核电不再执行变动成本补偿机制，利好核电运营企业盈利。</p>
         </div>
-        <div>
-          <div class="text-4xl md:text-5xl font-bold text-white">8<span class="text-2xl text-slate-400">个</span></div>
-          <div class="text-slate-400 text-sm mt-1">覆盖省份</div>
+      </div>
+      <div class="card-block" style="min-width: 360px; max-width: 360px; cursor: pointer;">
+        <div style="width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #2a1a3a, #1a0a2a);"></div>
+        <div style="padding: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span style="font-size: 12px; color: rgba(232,230,227,0.35);">2025-04-01</span>
+            <span class="tag">政策</span>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 600; color: #e8e6e3; line-height: 1.45; margin: 0;">全国统一电力市场体系建设实施意见发布</h3>
+          <p style="font-size: 13px; color: rgba(232,230,227,0.4); line-height: 1.65; margin-top: 0.75rem;">国务院办公厅发文要求分品种推进核电等电源进入电力市场，到2030年基本建成。</p>
         </div>
-        <div>
-          <div class="text-4xl md:text-5xl font-bold text-white">50<span class="text-2xl text-slate-400">+</span></div>
-          <div class="text-slate-400 text-sm mt-1">市场数据指标</div>
+      </div>
+      <div class="card-block" style="min-width: 360px; max-width: 360px; cursor: pointer;">
+        <div style="width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #1a3a3a, #0a2a2a);"></div>
+        <div style="padding: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span style="font-size: 12px; color: rgba(232,230,227,0.35);">2026-04-17</span>
+            <span class="tag">行业</span>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 600; color: #e8e6e3; line-height: 1.45; margin: 0;">核电市场化交易电量占比突破60%</h3>
+          <p style="font-size: 13px; color: rgba(232,230,227,0.4); line-height: 1.65; margin-top: 0.75rem;">全国核电市场化交易电量占比从2020年约30%提升至约60%，入市改革进入深水区。</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Key Metrics -->
-<section id="overview" class="py-16 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="glass rounded-xl p-6 card-hover glow-border text-center">
-        <div class="text-4xl font-bold text-white mb-1">112<span class="text-lg text-slate-500">台</span></div>
-        <div class="text-slate-400 text-sm">追踪核电机组</div>
-        <div class="text-emerald-400 text-xs mt-2">在运+在建</div>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border text-center">
-        <div class="text-4xl font-bold text-white mb-1">300<span class="text-lg text-slate-500">+</span></div>
-        <div class="text-slate-400 text-sm">收录政策法规</div>
-        <div class="text-emerald-400 text-xs mt-2">实时追踪</div>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border text-center">
-        <div class="text-4xl font-bold text-white mb-1">8<span class="text-lg text-slate-500">个</span></div>
-        <div class="text-slate-400 text-sm">覆盖省份</div>
-        <div class="text-emerald-400 text-xs mt-2">核电大省</div>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border text-center">
-        <div class="text-4xl font-bold text-white mb-1">50<span class="text-lg text-slate-500">+</span></div>
-        <div class="text-slate-400 text-sm">市场数据指标</div>
-        <div class="text-emerald-400 text-xs mt-2">多维分析</div>
-      </div>
+<!-- ==================== PROVINCE DETAILS (新增) ==================== -->
+<section id="provinces" style="background-color: #0f1113; padding: 6rem 0; position: relative;">
+  <div style="max-width: 1100px; margin: 0 auto; padding: 0 2rem;">
+    <div style="text-align: center; margin-bottom: 4rem;">
+      <p class="section-label">Province Markets</p>
+      <h2 class="section-title">核电大省电力市场动态</h2>
+      <p class="section-desc">2026年各核电省份市场化交易方案与价格机制</p>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="text-slate-400 text-sm mb-1">全国在运核电机组</div>
-        <div class="text-3xl font-bold text-white">58<span class="text-lg text-slate-500">台</span></div>
-        <div class="text-emerald-400 text-xs mt-2">+1台（2025年新增）</div>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="text-slate-400 text-sm mb-1">核电总装机容量</div>
-        <div class="text-3xl font-bold text-white">6,100<span class="text-lg text-slate-500">万kW</span></div>
-        <div class="text-emerald-400 text-xs mt-2">同比 +7.6%</div>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="text-slate-400 text-sm mb-1">2025年核准机组</div>
-        <div class="text-3xl font-bold text-white">10<span class="text-lg text-slate-500">台</span></div>
-        <div class="text-emerald-400 text-xs mt-2">连续4年核准10台+</div>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="text-slate-400 text-sm mb-1">中国核电发电量</div>
-        <div class="text-3xl font-bold text-white">2,444<span class="text-lg text-slate-500">亿kWh</span></div>
-        <div class="text-emerald-400 text-xs mt-2">2025年全年 +12.98%</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Policy Timeline -->
-<section id="timeline" class="py-16 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
-      <h2 class="text-2xl font-bold text-white">国内政策法规动态</h2>
-    </div>
-    <p class="text-slate-400 text-sm mb-8">实时追踪全国核电省份及国家级电力市场政策变化，深度解读影响核电运营与交易的关键法规</p>
-    <div class="relative space-y-6">
-      <div class="timeline-line"></div>
-      
-      <div class="relative pl-14 glass rounded-xl p-5 card-hover glow-border">
-        <div class="timeline-dot" style="top:20px"></div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="tag tag-blue">2026.04</span>
-          <span class="text-xs text-slate-500">行业</span>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-1">核电市场化交易电量占比突破60%</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">中国核能行业协会论坛披露，全国核电市场化交易电量占比从2020年约30%提升至约60%，核电入市改革进入深水区。</p>
-      </div>
-      
-      <div class="relative pl-14 glass rounded-xl p-5 card-hover glow-border">
-        <div class="timeline-dot" style="top:20px"></div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="tag tag-blue">2026.04</span>
-          <span class="text-xs text-slate-500">辽宁</span>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-1">辽宁省建立核电可持续发展价格结算机制</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">辽宁省发改委发布通知，建立核电可持续发展价格结算机制，保障核电机组平稳参与电力市场。分时段机制电量配置政策为其他核电大省提供借鉴。</p>
-      </div>
-      
-      <div class="relative pl-14 glass rounded-xl p-5 card-hover glow-border">
-        <div class="timeline-dot" style="top:20px"></div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="tag tag-blue">2025.12</span>
-          <span class="text-xs text-slate-500">国家</span>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-1">电力中长期市场基本规则发布</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">国家发改委、国家能源局联合印发，要求2026年3月1日前报各地实施细则备案。明确核电等电源参与中长期市场的交易、结算、价格形成机制。</p>
-      </div>
-      
-      <div class="relative pl-14 glass rounded-xl p-5 card-hover glow-border">
-        <div class="timeline-dot" style="top:20px"></div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="tag tag-blue">2025.12</span>
-          <span class="text-xs text-slate-500">福建</span>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-1">2026年福建省电力中长期市场交易方案发布</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">福清、宁德、漳州核电全部纳入中长期市场，核电交易电量预测700-800亿千瓦时，年度签约比例不低于70%。</p>
-      </div>
-      
-      <div class="relative pl-14 glass rounded-xl p-5 card-hover glow-border">
-        <div class="timeline-dot" style="top:20px"></div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="tag tag-blue">2025.10</span>
-          <span class="text-xs text-slate-500">广东</span>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-1">广东核电变动成本补偿机制正式取消</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">广东省明确2026年度核电不再执行变动成本补偿机制，核电市场化交易电价实质性改善，利好核电运营企业盈利。</p>
-      </div>
-      
-      <div class="relative pl-14 glass rounded-xl p-5 card-hover glow-border">
-        <div class="timeline-dot" style="top:20px"></div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="tag tag-blue">2025.09</span>
-          <span class="text-xs text-slate-500">江苏</span>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-1">江苏省电力现货市场启动连续结算试运行</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">江苏核电厂等省内发电企业全部参与现货市场，电能量申报价格上限1500元/兆瓦时，核电全面融入电力市场化交易。</p>
-      </div>
-      
-      <div class="relative pl-14 glass rounded-xl p-5 card-hover glow-border">
-        <div class="timeline-dot" style="top:20px"></div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="tag tag-blue">2025.04</span>
-          <span class="text-xs text-slate-500">国家</span>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-1">全国统一电力市场体系建设实施意见发布</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">国务院办公厅发文要求分品种推进核电等电源进入电力市场，到2030年基本建成全国统一电力市场体系。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Core Data Visualization -->
-<section id="data" class="py-16 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
-      <h2 class="text-2xl font-bold text-white">核心数据可视化</h2>
-    </div>
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="glass rounded-xl p-6 glow-border card-hover cursor-pointer" onclick="toggleDetail('detail-capacity')">
-        <h3 class="text-lg font-semibold text-white mb-4">中国核电装机容量增长趋势</h3>
-        <div id="chart-capacity" class="w-full h-72"></div>
-        <div class="mt-3 flex justify-center">
-          <span class="text-xs text-sky-400 flex items-center gap-1">点击查看详情 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
-        </div>
-      </div>
-      <div id="detail-capacity" class="hidden glass rounded-xl p-6 glow-border mt-4">
-        <div class="text-slate-400 text-sm leading-relaxed space-y-2">
-          <p><strong class="text-white">数据解读：</strong>截至2025年9月30日，中国核电累计装机容量达到0.62亿千瓦（6,100万kW），同比提升7.6%。</p>
-          <p><strong class="text-white">2025年新增：</strong>2025年1-9月新增装机容量153万千瓦。</p>
-          <p><strong class="text-white">"十五五"展望：</strong>预计2025年底在运核电装机容量达6,500万千瓦，2030/2035年核电发电量占比达8%/10%。</p>
-          <p><strong class="text-white">在建规模：</strong>全国在运和核准在建核电机组数量达102台，装机规模跃升至1.13亿千瓦。</p>
-        </div>
-      </div>
-      <div class="glass rounded-xl p-6 glow-border card-hover cursor-pointer" onclick="toggleDetail('detail-trading')">
-        <h3 class="text-lg font-semibold text-white mb-4">各省核电中长期交易电量（2026年）</h3>
-        <div id="chart-trading" class="w-full h-72"></div>
-        <div class="mt-3 flex justify-center">
-          <span class="text-xs text-sky-400 flex items-center gap-1">点击查看详情 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
-        </div>
-      </div>
-      <div id="detail-trading" class="hidden glass rounded-xl p-6 glow-border mt-4">
-        <div class="text-slate-400 text-sm leading-relaxed space-y-2">
-          <p><strong class="text-white">广东：</strong>岭澳/阳江核电年度市场化电量约312亿kWh，较2025年提高39亿kWh，设为最终交易上限。核电不再执行变动成本补偿机制。</p>
-          <p><strong class="text-white">福建：</strong>福清/宁德/漳州核电全部进入中长期市场，交易电量700-800亿kWh，其中双边协商不超过160亿kWh。</p>
-          <p><strong class="text-white">江苏：</strong>田湾核电市场化电量300亿kWh，价格不设限制。剩余200多亿kWh仍按政府核定价执行。</p>
-          <p><strong class="text-white">浙江：</strong>统调核电50%电量中长期，10%现货，40%政府授权合约。</p>
-          <p><strong class="text-white">辽宁：</strong>红沿河核电建立可持续发展价格结算机制，分时段机制电量配置。</p>
-        </div>
-      </div>
-      <div class="glass rounded-xl p-6 glow-border card-hover cursor-pointer" onclick="toggleDetail('detail-approval')">
-        <h3 class="text-lg font-semibold text-white mb-4">2019-2025年核电机组核准情况</h3>
-        <div id="chart-approval" class="w-full h-72"></div>
-        <div class="mt-3 flex justify-center">
-          <span class="text-xs text-sky-400 flex items-center gap-1">点击查看详情 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
-        </div>
-      </div>
-      <div id="detail-approval" class="hidden glass rounded-xl p-6 glow-border mt-4">
-        <div class="text-slate-400 text-sm leading-relaxed space-y-2">
-          <p><strong class="text-white">核准节奏：</strong>2019年重启核电核准以来，2019-2025年分别核准6/4/5/10/10/11/10台，连续4年核准10台+。</p>
-          <p><strong class="text-white">业主分布：</strong>中国核电/中国广核各20台（36%），国家电投10台（18%），华能集团6台（11%）。</p>
-          <p><strong class="text-white">投产高峰：</strong>中国核电2026-2029年预计投产机组2/4/2/3台，密集投产期临近。</p>
-          <p><strong class="text-white">政策导向：</strong>安全积极有序发展核电趋势确定，预计"十五五"年核准仍需维持8台以上。</p>
-        </div>
-      </div>
-      <div class="glass rounded-xl p-6 glow-border card-hover cursor-pointer" onclick="toggleDetail('detail-hours')">
-        <h3 class="text-lg font-semibold text-white mb-4">核电利用小时数变化</h3>
-        <div id="chart-hours" class="w-full h-72"></div>
-        <div class="mt-3 flex justify-center">
-          <span class="text-xs text-sky-400 flex items-center gap-1">点击查看详情 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
-        </div>
-      </div>
-      <div id="detail-hours" class="hidden glass rounded-xl p-6 glow-border mt-4">
-        <div class="text-slate-400 text-sm leading-relaxed space-y-2">
-          <p><strong class="text-white">利用效率：</strong>2024年核电利用小时数7,683小时，同比上升13小时，核电机组运行效率持续提升。</p>
-          <p><strong class="text-white">稳定性优势：</strong>核电作为基荷电源，利用小时数远高于风电、光伏等间歇性电源，是电力系统稳定运行的重要保障。</p>
-          <p><strong class="text-white">发电目标：</strong>中国核电2026年全年发电量目标为2,592亿kWh，其中核电2,100亿kWh，新能源492亿kWh。</p>
-          <p><strong class="text-white">2025年实绩：</strong>全年累计商运发电量2,444.30亿kWh，同比增长12.98%；上网电量2,307.47亿kWh，同比增长13.15%。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Policy Section -->
-<section id="policy" class="py-16 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
-      <h2 class="text-2xl font-bold text-white">政策解读</h2>
-    </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Policy Card 1 -->
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="tag tag-blue">最新</span>
-          <span class="text-xs text-slate-500">2025.12</span>
-        </div>
-        <h3 class="text-lg font-semibold text-white mb-2">电力中长期市场基本规则</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          国家发改委、国家能源局联合印发，要求2026年3月1日前报各地实施细则备案。明确核电等电源参与中长期市场的交易、结算、价格形成机制。
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <span class="tag tag-amber">中长期交易</span>
-          <span class="tag tag-amber">结算规则</span>
-        </div>
-      </div>
-      <!-- Policy Card 2 -->
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="tag tag-green">Capacity</span>
-          <span class="text-xs text-slate-500">2026</span>
-        </div>
-        <h3 class="text-lg font-semibold text-white mb-2">发电侧容量电价机制</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          发改价格〔2026〕114号文提出"电力现货市场连续运行后，适时建立可靠容量补偿机制"。核电在提供可靠容量方面具有优势，未来容量补偿将更有利于保障核电成本回收。
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <span class="tag tag-amber">容量电价</span>
-          <span class="tag tag-amber">现货市场</span>
-        </div>
-      </div>
-      <!-- Policy Card 3 -->
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="tag tag-rose">入市</span>
-          <span class="text-xs text-slate-500">2025.10</span>
-        </div>
-        <h3 class="text-lg font-semibold text-white mb-2">核电市场化交易改革</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          核电入市持续推进，辽宁率先建立核电可持续发展价格结算机制。江苏、福建、广东等核电大省纷纷出台2026年核电入市方案，核电市场化交易进入"深水区"。
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <span class="tag tag-amber">核电入市</span>
-          <span class="tag tag-amber">价格机制</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Province Details -->
-<section id="provinces" class="py-16 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
-      <h2 class="text-2xl font-bold text-white">核电大省电力市场动态</h2>
-    </div>
-    <div class="flex items-center gap-4 mb-6">
-      <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-400 hover:text-sky-400 transition-colors">
-        <input type="checkbox" id="switch-table" class="accent-sky-500" onchange="toggleView('table')">
+    
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 13px; color: rgba(232,230,227,0.45);">
+        <input type="checkbox" id="switch-table" onchange="toggleView()" style="accent-color: #c9a96e;">
         <span>切换为数据表格</span>
       </label>
     </div>
-    <div id="view-cards" class="space-y-4">
-      <!-- 广东 -->
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex flex-col md:flex-row md:items-start gap-4">
-          <div class="md:w-32 flex-shrink-0">
-            <div class="text-2xl font-bold text-sky-400">广东</div>
-            <div class="text-xs text-slate-500">核电第一大省</div>
+    
+    <div id="view-cards">
+      <div class="card-block" style="padding: 2rem; margin-bottom: 1rem; cursor: pointer;" onclick="toggleDetail('gd-detail')">
+        <div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+          <div style="flex-shrink: 0;">
+            <div style="font-size: 28px; font-weight: 700; color: #c9a96e;">广东</div>
+            <div style="font-size: 12px; color: rgba(232,230,227,0.35);">核电第一大省</div>
           </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="tag tag-blue">岭澳/阳江核电</span>
-              <span class="tag tag-amber">2026年市场化电量312亿kWh</span>
+          <div style="flex: 1;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+              <span class="tag">岭澳/阳江核电</span>
+              <span class="tag" style="color: #c9a96e;">2026年市场化电量312亿kWh</span>
             </div>
-            <p class="text-slate-400 text-sm leading-relaxed">
-              2026年安排岭澳、阳江核电年度市场化电量约312亿千瓦时，较去年提高39亿千瓦时，并设为最终交易上限。
-              <strong class="text-sky-400">核电不再执行变动成本补偿机制</strong>，2026年仍对核电应用政府授权单向价差合约机制，
-              授权合约电量为核电当月实际市场电量的90%，合约价格为核电核定上网电价不变。预计此变化将为广东核电带来收入提升约4-10亿元。
-            </p>
+            <p style="font-size: 14px; color: rgba(232,230,227,0.5); line-height: 1.7; margin: 0;">2026年安排岭澳、阳江核电年度市场化电量约312亿千瓦时，较去年提高39亿千瓦时。<strong style="color: #c9a96e;">核电不再执行变动成本补偿机制</strong>，政府授权单向价差合约电量为实际市场电量的90%。</p>
           </div>
         </div>
       </div>
-      <!-- 福建 -->
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex flex-col md:flex-row md:items-start gap-4">
-          <div class="md:w-32 flex-shrink-0">
-            <div class="text-2xl font-bold text-sky-400">福建</div>
-            <div class="text-xs text-slate-500">福清/宁德/漳州</div>
+      <div id="gd-detail" class="detail-panel">
+        <p style="font-size: 13px; color: rgba(232,230,227,0.45); line-height: 1.7; margin: 0;">预计此变化将为广东核电带来收入提升约4-10亿元。合约价格为核电核定上网电价不变，2026年仍对核电应用政府授权单向价差合约机制。</p>
+      </div>
+      
+      <div class="card-block" style="padding: 2rem; margin-bottom: 1rem; cursor: pointer;" onclick="toggleDetail('fj-detail')">
+        <div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+          <div style="flex-shrink: 0;">
+            <div style="font-size: 28px; font-weight: 700; color: #c9a96e;">福建</div>
+            <div style="font-size: 12px; color: rgba(232,230,227,0.35);">福清/宁德/漳州</div>
           </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="tag tag-blue">福清/宁德/漳州核电</span>
-              <span class="tag tag-amber">2026年交易电量700-800亿kWh</span>
+          <div style="flex: 1;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+              <span class="tag">福清/宁德/漳州核电</span>
+              <span class="tag" style="color: #c9a96e;">700-800亿kWh</span>
             </div>
-            <p class="text-slate-400 text-sm leading-relaxed">
-              2026年福建省电力中长期市场交易方案明确：福清、宁德、漳州核电全部参与中长期市场，核电交易电量预测为<strong class="text-sky-400">700-800亿千瓦时</strong>，
-              其中参与双边协商交易电量原则上不超过160亿千瓦时。10kV及以上工商业用户原则上全部直接参与市场交易。
-              现货市场运行期间，批发用户按照市场化交易形成的分时电价执行。
-            </p>
+            <p style="font-size: 14px; color: rgba(232,230,227,0.5); line-height: 1.7; margin: 0;">2026年福建省电力中长期市场交易方案明确：福清、宁德、漳州核电<strong style="color: #c9a96e;">全部参与中长期市场</strong>，核电交易电量预测为700-800亿千瓦时，其中双边协商不超过160亿kWh。</p>
           </div>
         </div>
       </div>
-      <!-- 江苏 -->
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex flex-col md:flex-row md:items-start gap-4">
-          <div class="md:w-32 flex-shrink-0">
-            <div class="text-2xl font-bold text-sky-400">江苏</div>
-            <div class="text-xs text-slate-500">田湾核电</div>
+      <div id="fj-detail" class="detail-panel">
+        <p style="font-size: 13px; color: rgba(232,230,227,0.45); line-height: 1.7; margin: 0;">10kV及以上工商业用户原则上全部直接参与市场交易。现货市场运行期间，批发用户按照市场化交易形成的分时电价执行。</p>
+      </div>
+      
+      <div class="card-block" style="padding: 2rem; margin-bottom: 1rem; cursor: pointer;" onclick="toggleDetail('js-detail')">
+        <div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+          <div style="flex-shrink: 0;">
+            <div style="font-size: 28px; font-weight: 700; color: #c9a96e;">江苏</div>
+            <div style="font-size: 12px; color: rgba(232,230,227,0.35);">田湾核电</div>
           </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="tag tag-blue">田湾核电</span>
-              <span class="tag tag-amber">2026年市场化电量300亿kWh</span>
+          <div style="flex: 1;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+              <span class="tag">田湾核电</span>
+              <span class="tag" style="color: #c9a96e;">300亿kWh</span>
             </div>
-            <p class="text-slate-400 text-sm leading-relaxed">
-              2026年纳入市场化交易的核电电量为<strong class="text-sky-400">300亿千瓦时</strong>，与2025年保持不变。
-              剩余200多亿千瓦时发电量仍按政府核定价执行，表明江苏对核电采取一定保护措施。
-              <strong class="text-sky-400">核电机组中长期交易价格不设限制</strong>。
-              火电容量电价由2025年的100元/kW·年上涨至2026年的165元/kW·年。
-            </p>
+            <p style="font-size: 14px; color: rgba(232,230,227,0.5); line-height: 1.7; margin: 0;">2026年纳入市场化交易的核电电量为<strong style="color: #c9a96e;">300亿千瓦时</strong>，与2025年保持不变。<strong style="color: #c9a96e;">核电机组中长期交易价格不设限制</strong>。剩余200多亿kWh仍按政府核定价执行。</p>
           </div>
         </div>
       </div>
-      <!-- 浙江 -->
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex flex-col md:flex-row md:items-start gap-4">
-          <div class="md:w-32 flex-shrink-0">
-            <div class="text-2xl font-bold text-sky-400">浙江</div>
-            <div class="text-xs text-slate-500">秦山/三门核电</div>
+      <div id="js-detail" class="detail-panel">
+        <p style="font-size: 13px; color: rgba(232,230,227,0.45); line-height: 1.7; margin: 0;">江苏对核电采取一定保护措施。火电容量电价由2025年的100元/kW·年上涨至2026年的165元/kW·年。</p>
+      </div>
+      
+      <div class="card-block" style="padding: 2rem; margin-bottom: 1rem; cursor: pointer;" onclick="toggleDetail('zj-detail')">
+        <div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+          <div style="flex-shrink: 0;">
+            <div style="font-size: 28px; font-weight: 700; color: #c9a96e;">浙江</div>
+            <div style="font-size: 12px; color: rgba(232,230,227,0.35);">秦山/三门核电</div>
           </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="tag tag-blue">秦山/三门核电</span>
-              <span class="tag tag-amber">50%中长期/10%现货/40%合约</span>
+          <div style="flex: 1;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+              <span class="tag">秦山/三门核电</span>
+              <span class="tag" style="color: #c9a96e;">50%中长期/10%现货/40%合约</span>
             </div>
-            <p class="text-slate-400 text-sm leading-relaxed">
-              《2026年浙江省电力市场化交易方案》：统调核电<strong class="text-sky-400">50%电量中长期，10%现货，40%政府授权合约</strong>。
-              中长期电量不低于90%，年度不低于70%，其余参与现货。核电价格仍由市场决定，零售套餐封顶价不超当月零售市场总体参考价的0.6%。
-              浙江通过二级回收机制，即使有峰时高价，电厂也很难赚到用户的钱。
-            </p>
+            <p style="font-size: 14px; color: rgba(232,230,227,0.5); line-height: 1.7; margin: 0;">统调核电<strong style="color: #c9a96e;">50%电量中长期，10%现货，40%政府授权合约</strong>。中长期电量不低于90%，年度不低于70%。核电价格仍由市场决定。</p>
           </div>
         </div>
       </div>
-      <!-- 辽宁 -->
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex flex-col md:flex-row md:items-start gap-4">
-          <div class="md:w-32 flex-shrink-0">
-            <div class="text-2xl font-bold text-sky-400">辽宁</div>
-            <div class="text-xs text-slate-500">红沿河核电</div>
+      <div id="zj-detail" class="detail-panel">
+        <p style="font-size: 13px; color: rgba(232,230,227,0.45); line-height: 1.7; margin: 0;">零售套餐封顶价不超当月零售市场总体参考价的0.6%。浙江通过二级回收机制，即使有峰时高价，电厂也很难赚到用户的钱。</p>
+      </div>
+      
+      <div class="card-block" style="padding: 2rem; margin-bottom: 1rem; cursor: pointer;" onclick="toggleDetail('ln-detail')">
+        <div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+          <div style="flex-shrink: 0;">
+            <div style="font-size: 28px; font-weight: 700; color: #c9a96e;">辽宁</div>
+            <div style="font-size: 12px; color: rgba(232,230,227,0.35);">红沿河核电</div>
           </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="tag tag-blue">红沿河核电</span>
-              <span class="tag tag-amber">可持续发展价格结算机制</span>
+          <div style="flex: 1;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+              <span class="tag">红沿河核电</span>
+              <span class="tag" style="color: #c9a96e;">可持续发展价格结算机制</span>
             </div>
-            <p class="text-slate-400 text-sm leading-relaxed">
-              辽宁省发改委发布《2026年辽宁省核电机组参与电力市场化交易有关事项的通知》，
-              <strong class="text-sky-400">建立核电可持续发展价格结算机制</strong>，
-              保障核电机组平稳参与电力市场。制定了分时段的机制电量配置政策，在保障核电可持续发展的同时，给市场价格发现留下空间。
-              这一机制可为其他核电大省提供借鉴。
-            </p>
+            <p style="font-size: 14px; color: rgba(232,230,227,0.5); line-height: 1.7; margin: 0;">辽宁省发改委发布通知，<strong style="color: #c9a96e;">建立核电可持续发展价格结算机制</strong>，保障核电机组平稳参与电力市场。分时段机制电量配置政策为其他核电大省提供借鉴。</p>
           </div>
         </div>
+      </div>
+      <div id="ln-detail" class="detail-panel">
+        <p style="font-size: 13px; color: rgba(232,230,227,0.45); line-height: 1.7; margin: 0;">制定了分时段的机制电量配置政策，在保障核电可持续发展的同时，给市场价格发现留下空间。这一机制可为其他核电大省提供借鉴。</p>
       </div>
     </div>
-
-    <!-- Table View (hidden by default) -->
-    <div id="view-table" class="hidden glass rounded-xl p-6 glow-border">
-      <h3 class="text-lg font-semibold text-white mb-4">2026年各省核电市场化交易方案对比</h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="border-b border-slate-700/50">
-              <th class="text-left py-3 px-2 text-slate-400 font-medium">省份</th>
-              <th class="text-left py-3 px-2 text-slate-400 font-medium">核电机组</th>
-              <th class="text-left py-3 px-2 text-slate-400 font-medium">2026年市场化电量</th>
-              <th class="text-left py-3 px-2 text-slate-400 font-medium">价格机制</th>
-              <th class="text-left py-3 px-2 text-slate-400 font-medium">关键变化</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b border-slate-700/30 hover:bg-slate-800/30">
-              <td class="py-3 px-2 text-white font-medium">广东</td>
-              <td class="py-3 px-2 text-slate-400">岭澳/阳江</td>
-              <td class="py-3 px-2 text-sky-400">312亿kWh</td>
-              <td class="py-3 px-2 text-slate-400">政府授权单向价差合约</td>
-              <td class="py-3 px-2 text-rose-400">不再执行变动成本补偿</td>
-            </tr>
-            <tr class="border-b border-slate-700/30 hover:bg-slate-800/30">
-              <td class="py-3 px-2 text-white font-medium">福建</td>
-              <td class="py-3 px-2 text-slate-400">福清/宁德/漳州</td>
-              <td class="py-3 px-2 text-sky-400">700-800亿kWh</td>
-              <td class="py-3 px-2 text-slate-400">双边协商+集中竞价</td>
-              <td class="py-3 px-2 text-rose-400">全部进入中长期市场</td>
-            </tr>
-            <tr class="border-b border-slate-700/30 hover:bg-slate-800/30">
-              <td class="py-3 px-2 text-white font-medium">江苏</td>
-              <td class="py-3 px-2 text-slate-400">田湾</td>
-              <td class="py-3 px-2 text-sky-400">300亿kWh</td>
-              <td class="py-3 px-2 text-slate-400">中长期价格不设限制</td>
-              <td class="py-3 px-2 text-amber-400">与2025年持平</td>
-            </tr>
-            <tr class="border-b border-slate-700/30 hover:bg-slate-800/30">
-              <td class="py-3 px-2 text-white font-medium">浙江</td>
-              <td class="py-3 px-2 text-slate-400">秦山/三门</td>
-              <td class="py-3 px-2 text-sky-400">50%中长期</td>
-              <td class="py-3 px-2 text-slate-400">40%政府授权合约</td>
-              <td class="py-3 px-2 text-amber-400">10%现货市场</td>
-            </tr>
-            <tr class="hover:bg-slate-800/30">
-              <td class="py-3 px-2 text-white font-medium">辽宁</td>
-              <td class="py-3 px-2 text-slate-400">红沿河</td>
-              <td class="py-3 px-2 text-sky-400">分时段机制</td>
-              <td class="py-3 px-2 text-slate-400">可持续发展价格结算</td>
-              <td class="py-3 px-2 text-emerald-400">新增机制保障</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Global Nuclear Overview -->
-<section id="global" class="py-16 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
-      <h2 class="text-2xl font-bold text-white">全球核电概览</h2>
-    </div>
-    <p class="text-slate-400 text-sm mb-8">主要核电国家的装机规模、发展规划与政策动态。数据截至2025年底，全球核电正经历新一轮扩张周期。</p>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">🇨🇳</span>
-            <div>
-              <div class="text-white font-semibold">中国</div>
-              <div class="text-xs text-slate-500">China</div>
-            </div>
-          </div>
-          <span class="tag tag-green">全球第一</span>
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-3">
-          <div>
-            <div class="text-2xl font-bold text-white">57<span class="text-sm text-slate-500">台</span></div>
-            <div class="text-xs text-slate-400">在运核电机组</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-white">26<span class="text-sm text-slate-500">台</span></div>
-            <div class="text-xs text-slate-400">在建机组</div>
-          </div>
-        </div>
-        <p class="text-slate-400 text-xs">在建26台全球第一，核电发电量占比目标2030年达8%</p>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">🇺🇸</span>
-            <div>
-              <div class="text-white font-semibold">美国</div>
-              <div class="text-xs text-slate-500">United States</div>
-            </div>
-          </div>
-          <span class="tag tag-amber">94台在运</span>
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-3">
-          <div>
-            <div class="text-2xl font-bold text-white">94<span class="text-sm text-slate-500">台</span></div>
-            <div class="text-xs text-slate-400">在运核电机组</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-white">400<span class="text-sm text-slate-500">GW</span></div>
-            <div class="text-xs text-slate-400">目标</div>
-          </div>
-        </div>
-        <p class="text-slate-400 text-xs">400GW目标，NRC改革推进核电复兴</p>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">🇷🇺</span>
-            <div>
-              <div class="text-white font-semibold">俄罗斯</div>
-              <div class="text-xs text-slate-500">Russia</div>
-            </div>
-          </div>
-          <span class="tag tag-blue">快堆技术</span>
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-3">
-          <div>
-            <div class="text-2xl font-bold text-white">38<span class="text-sm text-slate-500">台</span></div>
-            <div class="text-xs text-slate-400">在运核电机组</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-white">新建<span class="text-sm text-slate-500">计划</span></div>
-            <div class="text-xs text-slate-400">规划新建机组</div>
-          </div>
-        </div>
-        <p class="text-slate-400 text-xs">快堆技术领先，Rosatom积极出口核电项目</p>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">🇫🇷</span>
-            <div>
-              <div class="text-white font-semibold">法国</div>
-              <div class="text-xs text-slate-500">France</div>
-            </div>
-          </div>
-          <span class="tag tag-rose">核电占比65%</span>
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-3">
-          <div>
-            <div class="text-2xl font-bold text-white">56<span class="text-sm text-slate-500">台</span></div>
-            <div class="text-xs text-slate-400">在运核电机组</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-white">65%<span class="text-sm text-slate-500">占比</span></div>
-            <div class="text-xs text-slate-400">核电发电量占比</div>
-          </div>
-        </div>
-        <p class="text-slate-400 text-xs">核电发电量占比全球最高，ARENH改革推进市场化</p>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">🇬🇧</span>
-            <div>
-              <div class="text-white font-semibold">英国</div>
-              <div class="text-xs text-slate-500">United Kingdom</div>
-            </div>
-          </div>
-          <span class="tag tag-purple">SMR计划</span>
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-3">
-          <div>
-            <div class="text-2xl font-bold text-white">24<span class="text-sm text-slate-500">GW</span></div>
-            <div class="text-xs text-slate-400">核能部署目标</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-white">SMR<span class="text-sm text-slate-500">计划</span></div>
-            <div class="text-xs text-slate-400">Rolls-Royce</div>
-          </div>
-        </div>
-        <p class="text-slate-400 text-xs">24GW核能部署目标，小型模块化反应堆（SMR）计划推进</p>
-      </div>
-      <div class="glass rounded-xl p-6 card-hover glow-border">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">🇯🇵</span>
-            <div>
-              <div class="text-white font-semibold">日本</div>
-              <div class="text-xs text-slate-500">Japan</div>
-            </div>
-          </div>
-          <span class="tag tag-orange">重启加速</span>
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-3">
-          <div>
-            <div class="text-2xl font-bold text-white">33<span class="text-sm text-slate-500">台</span></div>
-            <div class="text-xs text-slate-400">可运营核电机组</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-white">重启<span class="text-sm text-slate-500">加速</span></div>
-            <div class="text-xs text-slate-400">技术输出</div>
-          </div>
-        </div>
-        <p class="text-slate-400 text-xs">重启加速，核电技术输出与SMR研发并进</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Deep Analysis -->
-<section id="analysis" class="py-16 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
-      <h2 class="text-2xl font-bold text-white">深度分析</h2>
-    </div>
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="glass rounded-xl p-6 glow-border">
-        <h3 class="text-lg font-semibold text-white mb-3">核电入市进程分析</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          2026年是核电入市的关键年份。广东核电不再执行变动成本补偿机制，市场化交易电量上升；
-          福建核电全部进入中长期市场；辽宁建立核电可持续发展价格结算机制。
-          核电市场化交易改革已迈进"深水区"，各省份政策差异化明显。
-        </p>
-        <div class="border-t border-slate-700/50 pt-3">
-          <div class="text-xs text-slate-500 mb-1">关键趋势</div>
-          <div class="text-sm text-slate-300">核电低碳价值与绿证、碳市场、容量机制的衔接将是下一步政策优化方向。</div>
-        </div>
-      </div>
-      <div class="glass rounded-xl p-6 glow-border">
-        <h3 class="text-lg font-semibold text-white mb-3">"十五五"核电增长展望</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          2019-2025年累计核准机组56台，2025年已核准10台。中国核电当前控股在运机组27台、装机2621.2万千瓦；
-          在建及核准待建机组18台、装机2067.5万千瓦。2026-2029年预计投产机组数量分别为2/4/2/3台，密集投产期临近。
-        </p>
-        <div class="border-t border-slate-700/50 pt-3">
-          <div class="text-xs text-slate-500 mb-1">装机预测</div>
-          <div class="text-sm text-slate-300">预计2030/2035年核电发电量占比达8%/10%，"十五五"年核准需维持8台以上。</div>
-        </div>
-      </div>
-      <div class="glass rounded-xl p-6 glow-border">
-        <h3 class="text-lg font-semibold text-white mb-3">核电电价趋势</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          2025年电力行业利润总额创历史新高，但板块内分化显著。新能源与核电受入市推进与供给宽松影响，电价持续下滑导致业绩承压。
-          预计2026年为电力市场"试错"与"过渡"年份，后续有望在供需边际改善与市场机制成熟过程中，推动各电源获取应有回报率。
-        </p>
-        <div class="border-t border-slate-700/50 pt-3">
-          <div class="text-xs text-slate-500 mb-1">价格展望</div>
-          <div class="text-sm text-slate-300">市场化交易电价下行压力仍存，但容量电价机制完善有望对冲部分影响。</div>
-        </div>
-      </div>
-      <div class="glass rounded-xl p-6 glow-border">
-        <h3 class="text-lg font-semibold text-white mb-3">国际核电动态</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          全球核电复苏加速。2024年中国在运和核准在建核电机组数量达到102台，装机规模跃升至1.13亿千瓦，
-          成功登顶世界核电大国之列。核技术应用产业高质量发展三年行动方案（2024-2026年）提出，
-          到2026年核技术应用产业年直接经济产值达4000亿元。
-        </p>
-        <div class="border-t border-slate-700/50 pt-3">
-          <div class="text-xs text-slate-500 mb-1">全球地位</div>
-          <div class="text-sm text-slate-300">中国从核电大国向核电强国稳步迈进，核电成为能源安全的关键支撑。</div>
+    
+    <div id="view-table" style="display: none;">
+      <div class="card-block" style="padding: 1.5rem;">
+        <div class="table-container">
+          <table>
+            <thead><tr><th>省份</th><th>核电机组</th><th>2026年市场化电量</th><th>价格机制</th><th>关键变化</th></tr></thead>
+            <tbody>
+              <tr><td style="color: #e8e6e3; font-weight: 600;">广东</td><td>岭澳/阳江</td><td style="color: #c9a96e;">312亿kWh</td><td>政府授权单向价差合约</td><td style="color: #c9a96e;">不再执行变动成本补偿</td></tr>
+              <tr><td style="color: #e8e6e3; font-weight: 600;">福建</td><td>福清/宁德/漳州</td><td style="color: #c9a96e;">700-800亿kWh</td><td>双边协商+集中竞价</td><td style="color: #c9a96e;">全部进入中长期市场</td></tr>
+              <tr><td style="color: #e8e6e3; font-weight: 600;">江苏</td><td>田湾</td><td style="color: #c9a96e;">300亿kWh</td><td>中长期价格不设限制</td><td>与2025年持平</td></tr>
+              <tr><td style="color: #e8e6e3; font-weight: 600;">浙江</td><td>秦山/三门</td><td style="color: #c9a96e;">50%中长期</td><td>40%政府授权合约</td><td>10%现货市场</td></tr>
+              <tr><td style="color: #e8e6e3; font-weight: 600;">辽宁</td><td>红沿河</td><td style="color: #c9a96e;">分时段机制</td><td>可持续发展价格结算</td><td style="color: #7aad6e;">新增机制保障</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Subscribe Section -->
-<section id="subscribe" class="py-16 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="glass rounded-2xl p-8 md:p-12 glow-border relative overflow-hidden">
-      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(14,165,233,0.15),transparent_50%)]"></div>
-      <div class="relative text-center max-w-2xl mx-auto">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-sm mb-6">
-          <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-          订阅最新动态
-        </div>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Stay Updated</h2>
-        <p class="text-slate-400 mb-8 leading-relaxed">
-          订阅后，当有新政策发布、国际动态更新或深度分析文章上线时，您将第一时间收到推送通知。
-          实时追踪核电电力市场的每一个关键变化。
-        </p>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div class="flex items-center gap-2 text-sm text-slate-400">
-            <span class="text-lg">🔔</span>
-            <span>实时推送新政策和行业动态</span>
-          </div>
-          <div class="flex items-center gap-2 text-sm text-slate-400">
-            <span class="text-lg">📊</span>
-            <span>市场数据更新及时通知</span>
-          </div>
-          <div class="flex items-center gap-2 text-sm text-slate-400">
-            <span class="text-lg">📝</span>
-            <span>深度分析文章优先阅读</span>
-          </div>
-          <div class="flex items-center gap-2 text-sm text-slate-400">
-            <span class="text-lg">⚙️</span>
-            <span>随时调整订阅偏好设置</span>
-          </div>
-        </div>
-        <div class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-          <input type="email" id="subscribe-email" placeholder="输入您的邮箱地址" class="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 transition-colors">
-          <button onclick="handleSubscribe()" class="subscribe-btn px-6 py-3 text-white font-medium rounded-lg flex items-center justify-center gap-2">
-            <span>立即订阅</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-          </button>
-        </div>
-        <p id="subscribe-msg" class="text-sm mt-4 text-slate-500"></p>
-      </div>
-    </div>
+<!-- ==================== DATA VISUALIZATION ==================== -->
+<section id="data" style="background-color: #0a0b0c; padding: 6rem 0; position: relative; overflow: hidden;">
+  <div style="position: absolute; inset: 0; z-index: 0;">
+    <img alt="" src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1920&q=80" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.08;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(#0a0b0c 0%, transparent 30%, transparent 70%, #0a0b0c 100%);"></div>
   </div>
-</section>
-
-<!-- Footer -->
-<footer class="border-t border-slate-800/50 py-12 px-4 mt-16">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-      <div class="flex items-center gap-3">
-        <span class="text-2xl">☢</span>
+  <div style="position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 2rem;">
+    <div style="text-align: center; margin-bottom: 4rem;">
+      <p class="section-label">Data Visualization</p>
+      <h2 class="section-title">市场数据可视化</h2>
+      <p class="section-desc">核电市场化交易电价趋势与装机容量增长动态</p>
+    </div>
+    <div class="card-block" style="padding: 2rem; margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
         <div>
-          <h3 class="text-lg font-bold text-white">核市观</h3>
-          <p class="text-xs text-slate-500">Nuclear Market Watch</p>
+          <h3 style="font-size: 18px; font-weight: 600; color: #e8e6e3; margin: 0;">核电市场化交易电价趋势</h3>
+          <p style="font-size: 12px; color: rgba(232,230,227,0.35); margin: 0.4rem 0 0;">2019-2025年主要核电省份均价（元/MWh）</p>
         </div>
       </div>
-      <div class="text-slate-500 text-sm text-center md:text-right">
-        <p>数据来源：中国核电公告、国家发改委、国家能源局、各省发改委、电力交易中心</p>
-        <p class="mt-1">数据更新日期：2026年6月12日</p>
+      <div id="chart-price" style="width: 100%; height: 360px;"></div>
+    </div>
+    <div class="card-block" style="padding: 2rem; margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <h3 style="font-size: 18px; font-weight: 600; color: #e8e6e3; margin: 0;">核电机组装机量增长</h3>
+          <p style="font-size: 12px; color: rgba(232,230,227,0.35); margin: 0.4rem 0 0;">2015-2025年在运/在建机组与在运容量（GW）</p>
+        </div>
+      </div>
+      <div id="chart-capacity" style="width: 100%; height: 360px;"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; background-color: rgba(232,230,227,0.06); margin-top: 2rem;">
+      <div style="background-color: #141517; padding: 1.5rem; text-align: center;">
+        <div style="font-size: 28px; font-weight: 200; color: #c9a96e; line-height: 1;">+107%</div>
+        <div style="font-size: 14px; color: #e8e6e3; margin-top: 0.5rem; font-weight: 500;">装机增速（10年）</div>
+        <div style="font-size: 12px; color: rgba(232,230,227,0.35); margin-top: 0.25rem;">28台 → 58台</div>
+      </div>
+      <div style="background-color: #141517; padding: 1.5rem; text-align: center;">
+        <div style="font-size: 28px; font-weight: 200; color: #c9a96e; line-height: 1;">+142%</div>
+        <div style="font-size: 14px; color: #e8e6e3; margin-top: 0.5rem; font-weight: 500;">容量增速（10年）</div>
+        <div style="font-size: 12px; color: rgba(232,230,227,0.35); margin-top: 0.25rem;">26GW → 63GW</div>
+      </div>
+      <div style="background-color: #141517; padding: 1.5rem; text-align: center;">
+        <div style="font-size: 28px; font-weight: 200; color: #c9a96e; line-height: 1;">广东</div>
+        <div style="font-size: 14px; color: #e8e6e3; margin-top: 0.5rem; font-weight: 500;">电价涨幅最大</div>
+        <div style="font-size: 12px; color: rgba(232,230,227,0.35); margin-top: 0.25rem;">+33%</div>
+      </div>
+      <div style="background-color: #141517; padding: 1.5rem; text-align: center;">
+        <div style="font-size: 28px; font-weight: 200; color: #c9a96e; line-height: 1;">第一</div>
+        <div style="font-size: 14px; color: #e8e6e3; margin-top: 0.5rem; font-weight: 500;">在建规模全球</div>
+        <div style="font-size: 12px; color: rgba(232,230,227,0.35); margin-top: 0.25rem;">28台在建</div>
       </div>
     </div>
-    <div class="mt-8 pt-8 border-t border-slate-800/50 text-center text-slate-600 text-xs">
-      <p>本站信息仅供参考，不构成投资建议。市场有风险，决策需谨慎。</p>
+  </div>
+</section>
+
+<!-- ==================== IN-DEPTH ANALYSIS ==================== -->
+<section id="analysis" style="background-color: #0a0b0c; padding: 6rem 0; position: relative;">
+  <div style="text-align: center; margin-bottom: 5rem; padding: 0 1.25rem;">
+    <p class="section-label">In-Depth Analysis</p>
+    <h2 class="section-title">行业深度分析</h2>
+  </div>
+  <div style="max-width: 1100px; margin: 0 auto; padding: 0 2rem;">
+    <div class="animate-fade-in" style="display: flex; align-items: center; gap: 3rem; margin-bottom: 4rem; flex-wrap: wrap;">
+      <div style="flex: 1 1 45%; min-width: 300px; overflow: hidden;">
+        <div style="width: 100%; height: 280px; background: linear-gradient(135deg, #1a2a3a, #0a1a2a); border-radius: 2px;"></div>
+      </div>
+      <div style="flex: 1 1 45%; min-width: 300px; padding: 1rem 0;">
+        <p style="font-size: 12px; color: #c9a96e; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem;">从保量保价到全面市场竞争</p>
+        <h3 style="font-size: clamp(1.3rem, 2.5vw, 2rem); font-weight: 700; color: #e8e6e3; line-height: 1.2; margin: 0;">核电入市改革进入深水区</h3>
+        <p style="font-size: 14px; color: rgba(232,230,227,0.45); line-height: 1.75; margin-top: 1.25rem;">核电参与电力交易正从固定的标杆上网电价向市场化转型，呈现保量保价与市场电量双轨并存的新格局。</p>
+        <a href="#" style="display: inline-block; margin-top: 1.75rem; font-size: 13px; color: #c9a96e; border-bottom: 1px solid rgba(201,169,110,0.4); padding-bottom: 3px;">阅读全文 →</a>
+      </div>
     </div>
+    <div class="animate-fade-in" style="display: flex; align-items: center; gap: 3rem; margin-bottom: 4rem; flex-wrap: wrap; flex-direction: row-reverse;">
+      <div style="flex: 1 1 45%; min-width: 300px; overflow: hidden;">
+        <div style="width: 100%; height: 280px; background: linear-gradient(135deg, #2a1a3a, #1a0a2a); border-radius: 2px;"></div>
+      </div>
+      <div style="flex: 1 1 45%; min-width: 300px; padding: 1rem 0;">
+        <p style="font-size: 12px; color: #c9a96e; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem;">2030年基本建成目标明确</p>
+        <h3 style="font-size: clamp(1.3rem, 2.5vw, 2rem); font-weight: 700; color: #e8e6e3; line-height: 1.2; margin: 0;">全国统一电力市场体系建设提速</h3>
+        <p style="font-size: 14px; color: rgba(232,230,227,0.45); line-height: 1.75; margin-top: 1.25rem;">国务院办公厅发布实施意见，要求到2030年基本建成全国统一电力市场体系。核电入市是其中的重要组成部分。</p>
+        <a href="#" style="display: inline-block; margin-top: 1.75rem; font-size: 13px; color: #c9a96e; border-bottom: 1px solid rgba(201,169,110,0.4); padding-bottom: 3px;">阅读全文 →</a>
+      </div>
+    </div>
+    <div class="animate-fade-in" style="display: flex; align-items: center; gap: 3rem; margin-bottom: 4rem; flex-wrap: wrap;">
+      <div style="flex: 1 1 45%; min-width: 300px; overflow: hidden;">
+        <div style="width: 100%; height: 280px; background: linear-gradient(135deg, #1a3a2a, #0a2a1a); border-radius: 2px;"></div>
+      </div>
+      <div style="flex: 1 1 45%; min-width: 300px; padding: 1rem 0;">
+        <p style="font-size: 12px; color: #c9a96e; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem;">从30%到60%的跨越式增长</p>
+        <h3 style="font-size: clamp(1.3rem, 2.5vw, 2rem); font-weight: 700; color: #e8e6e3; line-height: 1.2; margin: 0;">核电市场化交易电量占比持续攀升</h3>
+        <p style="font-size: 14px; color: rgba(232,230,227,0.45); line-height: 1.75; margin-top: 1.25rem;">全国核电市场化交易电量比例已由2020年约30%提升至当前约60%，核电从计划电量向市场化交易的转型正在加速。</p>
+        <a href="#" style="display: inline-block; margin-top: 1.75rem; font-size: 13px; color: #c9a96e; border-bottom: 1px solid rgba(201,169,110,0.4); padding-bottom: 3px;">阅读全文 →</a>
+      </div>
+    </div>
+    <div class="animate-fade-in" style="display: flex; align-items: center; gap: 3rem; flex-wrap: wrap; flex-direction: row-reverse;">
+      <div style="flex: 1 1 45%; min-width: 300px; overflow: hidden;">
+        <div style="width: 100%; height: 280px; background: linear-gradient(135deg, #3a2a1a, #2a1a0a); border-radius: 2px;"></div>
+      </div>
+      <div style="flex: 1 1 45%; min-width: 300px; padding: 1rem 0;">
+        <p style="font-size: 12px; color: #c9a96e; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem;">三位一体市场化价格体系</p>
+        <h3 style="font-size: clamp(1.3rem, 2.5vw, 2rem); font-weight: 700; color: #e8e6e3; line-height: 1.2; margin: 0;">容量电价机制改革与核电可持续发展</h3>
+        <p style="font-size: 14px; color: rgba(232,230,227,0.45); line-height: 1.75; margin-top: 1.25rem;">电能量、平衡、容量三大板块实现一体化运作。核电在提供可靠容量方面具有优势，未来容量补偿将更有利于保障核电成本回收。</p>
+        <a href="#" style="display: inline-block; margin-top: 1.75rem; font-size: 13px; color: #c9a96e; border-bottom: 1px solid rgba(201,169,110,0.4); padding-bottom: 3px;">阅读全文 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== GLOBAL OVERVIEW ==================== -->
+<section id="overview" style="background-color: #0f1113; padding: 6rem 0; position: relative; overflow: hidden;">
+  <div style="text-align: center; margin-bottom: 4rem; padding: 0 1.25rem;">
+    <p class="section-label">Global Nuclear Overview</p>
+    <h2 class="section-title">全球核电概览</h2>
+    <p class="section-desc">主要核电国家的装机规模、发展规划与政策动态</p>
+  </div>
+  <div style="max-width: 1000px; margin: 0 auto; padding: 0 1.25rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background-color: rgba(232,230,227,0.06);">
+    <div class="card-block" style="padding: 2.5rem 2rem; text-align: center;">
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 20px; font-weight: 600; color: #e8e6e3; letter-spacing: 0.05em;">中国</div>
+        <div style="font-size: 10px; color: rgba(232,230,227,0.25); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px;">China</div>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.3rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 42px; font-weight: 200; color: #c9a96e; line-height: 1;">57</span>
+        <span style="font-size: 14px; color: #c9a96e;">台</span>
+      </div>
+      <div style="font-size: 13px; color: rgba(232,230,227,0.5); margin-bottom: 1rem;">在运核电机组</div>
+      <div style="display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+        <span class="tag">在建26台</span>
+        <span class="tag">全球第一</span>
+      </div>
+    </div>
+    <div class="card-block" style="padding: 2.5rem 2rem; text-align: center;">
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 20px; font-weight: 600; color: #e8e6e3; letter-spacing: 0.05em;">美国</div>
+        <div style="font-size: 10px; color: rgba(232,230,227,0.25); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px;">United States</div>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.3rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 42px; font-weight: 200; color: #c9a96e; line-height: 1;">94</span>
+        <span style="font-size: 14px; color: #c9a96e;">台</span>
+      </div>
+      <div style="font-size: 13px; color: rgba(232,230,227,0.5); margin-bottom: 1rem;">在运核电机组</div>
+      <div style="display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+        <span class="tag">400GW目标</span>
+        <span class="tag">NRC改革</span>
+      </div>
+    </div>
+    <div class="card-block" style="padding: 2.5rem 2rem; text-align: center;">
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 20px; font-weight: 600; color: #e8e6e3; letter-spacing: 0.05em;">俄罗斯</div>
+        <div style="font-size: 10px; color: rgba(232,230,227,0.25); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px;">Russia</div>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.3rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 42px; font-weight: 200; color: #c9a96e; line-height: 1;">38</span>
+        <span style="font-size: 14px; color: #c9a96e;">台</span>
+      </div>
+      <div style="font-size: 13px; color: rgba(232,230,227,0.5); margin-bottom: 1rem;">规划新建机组</div>
+      <div style="display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+        <span class="tag">快堆技术</span>
+        <span class="tag">Rosatom出口</span>
+      </div>
+    </div>
+    <div class="card-block" style="padding: 2.5rem 2rem; text-align: center;">
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 20px; font-weight: 600; color: #e8e6e3; letter-spacing: 0.05em;">法国</div>
+        <div style="font-size: 10px; color: rgba(232,230,227,0.25); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px;">France</div>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.3rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 42px; font-weight: 200; color: #c9a96e; line-height: 1;">56</span>
+        <span style="font-size: 14px; color: #c9a96e;">台</span>
+      </div>
+      <div style="font-size: 13px; color: rgba(232,230,227,0.5); margin-bottom: 1rem;">在运核电机组</div>
+      <div style="display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+        <span class="tag">核电占比65%</span>
+        <span class="tag">ARENH改革</span>
+      </div>
+    </div>
+    <div class="card-block" style="padding: 2.5rem 2rem; text-align: center;">
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 20px; font-weight: 600; color: #e8e6e3; letter-spacing: 0.05em;">英国</div>
+        <div style="font-size: 10px; color: rgba(232,230,227,0.25); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px;">United Kingdom</div>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.3rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 42px; font-weight: 200; color: #c9a96e; line-height: 1;">24</span>
+        <span style="font-size: 14px; color: #c9a96e;">GW</span>
+      </div>
+      <div style="font-size: 13px; color: rgba(232,230,227,0.5); margin-bottom: 1rem;">核能部署目标</div>
+      <div style="display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+        <span class="tag">SMR计划</span>
+        <span class="tag">Rolls-Royce</span>
+      </div>
+    </div>
+    <div class="card-block" style="padding: 2.5rem 2rem; text-align: center;">
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 20px; font-weight: 600; color: #e8e6e3; letter-spacing: 0.05em;">日本</div>
+        <div style="font-size: 10px; color: rgba(232,230,227,0.25); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px;">Japan</div>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.3rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 42px; font-weight: 200; color: #c9a96e; line-height: 1;">33</span>
+        <span style="font-size: 14px; color: #c9a96e;">台</span>
+      </div>
+      <div style="font-size: 13px; color: rgba(232,230,227,0.5); margin-bottom: 1rem;">可运营核电机组</div>
+      <div style="display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+        <span class="tag">重启加速</span>
+        <span class="tag">技术输出</span>
+      </div>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 3rem; padding: 0 1.25rem;">
+    <p style="font-size: 12px; color: rgba(232,230,227,0.25); line-height: 1.6; max-width: 600px; margin: 0 auto;">数据截至2025年底。全球核电正经历新一轮扩张周期，各国纷纷加码核能投资以保障能源安全与碳中和目标</p>
+  </div>
+</section>
+
+<!-- ==================== SUBSCRIBE ==================== -->
+<section style="background-color: #0f1113; padding: 5rem 0;">
+  <div style="max-width: 1100px; margin: 0 auto; padding: 0 2rem;">
+    <div style="display: flex; gap: 3rem; align-items: flex-start; flex-wrap: wrap;">
+      <div style="flex: 1 1 300px;">
+        <p class="section-label">Stay Updated</p>
+        <h2 class="section-title">订阅最新动态</h2>
+        <p style="font-size: 15px; color: rgba(232,230,227,0.5); line-height: 1.8; margin-top: 1rem; max-width: 400px;">订阅后，当有新政策发布、国际动态更新或深度分析文章上线时，您将第一时间收到推送通知。</p>
+        <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;"><span style="font-size: 16px;">🔔</span><span style="font-size: 13px; color: rgba(232,230,227,0.45);">实时推送新政策和行业动态</span></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;"><span style="font-size: 16px;">📊</span><span style="font-size: 13px; color: rgba(232,230,227,0.45);">市场数据更新及时通知</span></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;"><span style="font-size: 16px;">📝</span><span style="font-size: 13px; color: rgba(232,230,227,0.45);">深度分析文章优先阅读</span></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;"><span style="font-size: 16px;">⚙️</span><span style="font-size: 13px; color: rgba(232,230,227,0.45);">随时调整订阅偏好设置</span></div>
+        </div>
+      </div>
+      <div style="flex: 0 0 360px; min-width: 300px;">
+        <div class="card-block" style="padding: 1.5rem;">
+          <h3 style="font-size: 16px; font-weight: 600; color: #e8e6e3; margin: 0 0 0.75rem;">订阅推送</h3>
+          <p style="font-size: 13px; color: rgba(232,230,227,0.4); margin: 0;">登录后即可订阅最新政策与动态推送</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer style="background-color: #0a0b0c; border-top: 1px solid rgba(232,230,227,0.06); padding: 3rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+  <div>
+    <p style="font-size: 13px; color: rgba(232,230,227,0.35); margin: 0;">© 2026 核市观 Nuclear Market Watch. 保留所有权利</p>
+    <p style="font-size: 11px; color: rgba(232,230,227,0.2); margin: 0.25rem 0 0;">数据仅供参考，不构成投资建议</p>
+  </div>
+  <div style="display: flex; align-items: center; gap: 2.5rem;">
+    <div style="display: flex; gap: 1.5rem;">
+      <a href="#" style="font-size: 13px; color: rgba(232,230,227,0.35);">微信</a>
+      <a href="#" style="font-size: 13px; color: rgba(232,230,227,0.35);">微博</a>
+      <a href="#" style="font-size: 13px; color: rgba(232,230,227,0.35);">知乎</a>
+    </div>
+    <span style="font-size: 18px; font-weight: 700; color: rgba(232,230,227,0.06); letter-spacing: 0.05em; user-select: none;">核市观</span>
   </div>
 </footer>
 
 <script>
+// Chart: Price Trend
+const chartPrice = echarts.init(document.getElementById('chart-price'));
+chartPrice.setOption({
+  backgroundColor: 'transparent',
+  tooltip: { trigger: 'axis', backgroundColor: '#141517', borderColor: 'rgba(232,230,227,0.08)', textStyle: { color: '#e8e6e3', fontSize: 12 } },
+  grid: { left: '8%', right: '4%', bottom: '12%', top: '8%', containLabel: true },
+  xAxis: { type: 'category', data: ['2019','2020','2021','2022','2023','2024','2025'], axisLine: { lineStyle: { color: 'rgba(232,230,227,0.06)' } }, axisLabel: { color: 'rgba(232,230,227,0.35)', fontSize: 12 } },
+  yAxis: { type: 'value', axisLine: { lineStyle: { color: 'rgba(232,230,227,0.06)' } }, axisLabel: { color: 'rgba(232,230,227,0.35)' }, splitLine: { lineStyle: { color: 'rgba(232,230,227,0.04)', type: 'dashed' } } },
+  legend: { bottom: 0, textStyle: { color: 'rgba(232,230,227,0.5)', fontSize: 11 }, itemWidth: 14, itemHeight: 8 },
+  series: [
+    { name: '广东', type: 'line', data: [325, 380, 420, 480, 510, 540, 550], smooth: true, itemStyle: { color: '#c9a96e' }, lineStyle: { width: 2 }, symbol: 'circle', symbolSize: 6 },
+    { name: '福建', type: 'line', data: [320, 370, 410, 460, 490, 520, 530], smooth: true, itemStyle: { color: '#7aad6e' }, lineStyle: { width: 2 }, symbol: 'circle', symbolSize: 6 },
+    { name: '浙江', type: 'line', data: [310, 360, 400, 450, 470, 500, 510], smooth: true, itemStyle: { color: '#6e8aad' }, lineStyle: { width: 2 }, symbol: 'circle', symbolSize: 6 },
+    { name: '江苏', type: 'line', data: [330, 390, 430, 470, 500, 530, 540], smooth: true, itemStyle: { color: '#ad7a6e' }, lineStyle: { width: 2 }, symbol: 'circle', symbolSize: 6 },
+    { name: '山东', type: 'line', data: [315, 365, 405, 455, 485, 515, 525], smooth: true, itemStyle: { color: '#9b7aad' }, lineStyle: { width: 2 }, symbol: 'circle', symbolSize: 6 },
+    { name: '辽宁', type: 'line', data: [310, 360, 395, 440, 470, 500, 510], smooth: true, itemStyle: { color: '#7aad9b' }, lineStyle: { width: 2 }, symbol: 'circle', symbolSize: 6 }
+  ]
+});
+
 // Chart: Capacity Growth
 const chartCapacity = echarts.init(document.getElementById('chart-capacity'));
 chartCapacity.setOption({
   backgroundColor: 'transparent',
-  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
-  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', data: ['2019','2020','2021','2022','2023','2024','2025M9'], axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' } },
-  yAxis: { type: 'value', name: '万kW', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#1e293b' } } },
-  series: [{
-    name: '核电装机容量',
-    type: 'line',
-    data: [4874, 4989, 5326, 5553, 5691, 5943, 6100],
-    smooth: true,
-    itemStyle: { color: '#0ea5e9' },
-    areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(14,165,233,0.3)' }, { offset: 1, color: 'rgba(14,165,233,0)' }] } },
-    lineStyle: { width: 3 }
-  }]
+  tooltip: { trigger: 'axis', backgroundColor: '#141517', borderColor: 'rgba(232,230,227,0.08)', textStyle: { color: '#e8e6e3', fontSize: 12 } },
+  grid: { left: '8%', right: '8%', bottom: '12%', top: '8%', containLabel: true },
+  xAxis: { type: 'category', data: ['2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'], axisLine: { lineStyle: { color: 'rgba(232,230,227,0.06)' } }, axisLabel: { color: 'rgba(232,230,227,0.35)', fontSize: 12 } },
+  yAxis: [
+    { type: 'value', name: '台', position: 'left', axisLine: { lineStyle: { color: 'rgba(232,230,227,0.06)' } }, axisLabel: { color: 'rgba(232,230,227,0.35)' }, splitLine: { lineStyle: { color: 'rgba(232,230,227,0.04)', type: 'dashed' } } },
+    { type: 'value', name: 'GW', position: 'right', axisLine: { lineStyle: { color: 'rgba(232,230,227,0.06)' } }, axisLabel: { color: 'rgba(232,230,227,0.35)' }, splitLine: { show: false } }
+  ],
+  legend: { bottom: 0, textStyle: { color: 'rgba(232,230,227,0.5)', fontSize: 11 }, itemWidth: 14, itemHeight: 8 },
+  series: [
+    { name: '在运机组', type: 'bar', data: [28, 30, 35, 38, 45, 48, 52, 55, 56, 57, 58], itemStyle: { color: '#c9a96e', borderRadius: [2,2,0,0] }, barWidth: '30%' },
+    { name: '在建机组', type: 'bar', data: [24, 26, 28, 30, 32, 30, 28, 26, 28, 26, 28], itemStyle: { color: 'rgba(201,169,110,0.35)', borderRadius: [2,2,0,0] }, barWidth: '30%' },
+    { name: '在运容量(GW)', type: 'line', yAxisIndex: 1, data: [26, 28, 33, 37, 44, 48, 53, 56, 58, 60, 63], smooth: true, itemStyle: { color: '#7aad6e' }, lineStyle: { width: 2 }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(122,173,110,0.2)' }, { offset: 1, color: 'rgba(122,173,110,0)' }] } }, symbol: 'circle', symbolSize: 6 }
+  ]
 });
 
-// Chart: Trading Volume by Province
-const chartTrading = echarts.init(document.getElementById('chart-trading'));
-chartTrading.setOption({
-  backgroundColor: 'transparent',
-  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
-  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'value', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#1e293b' } } },
-  yAxis: { type: 'category', data: ['辽宁','浙江','江苏','福建','广东'], axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' } },
-  series: [{
-    name: '2026年市场化交易电量',
-    type: 'bar',
-    data: [80, 150, 300, 750, 312],
-    itemStyle: {
-      color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#0ea5e9' }, { offset: 1, color: '#22d3ee' }] },
-      borderRadius: [0, 4, 4, 0]
-    },
-    label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c}亿kWh' }
-  }]
-});
-
-// Chart: Approval History
-const chartApproval = echarts.init(document.getElementById('chart-approval'));
-chartApproval.setOption({
-  backgroundColor: 'transparent',
-  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
-  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', data: ['2019','2020','2021','2022','2023','2024','2025'], axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' } },
-  yAxis: { type: 'value', name: '台', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#1e293b' } } },
-  series: [{
-    name: '核准机组',
-    type: 'bar',
-    data: [6, 4, 5, 10, 10, 11, 10],
-    itemStyle: {
-      color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#22d3ee' }, { offset: 1, color: '#0ea5e9' }] },
-      borderRadius: [4, 4, 0, 0]
-    },
-    label: { show: true, position: 'top', color: '#e2e8f0' }
-  }]
-});
-
-// Chart: Utilization Hours
-const chartHours = echarts.init(document.getElementById('chart-hours'));
-chartHours.setOption({
-  backgroundColor: 'transparent',
-  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
-  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', data: ['2020','2021','2022','2023','2024','2025M1-9'], axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' } },
-  yAxis: { type: 'value', name: '小时', min: 7000, axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#1e293b' } } },
-  series: [{
-    name: '利用小时数',
-    type: 'line',
-    data: [7453, 7778, 7656, 7670, 7683, 5800],
-    smooth: true,
-    itemStyle: { color: '#10b981' },
-    areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(16,185,129,0.2)' }, { offset: 1, color: 'rgba(16,185,129,0)' }] } },
-    lineStyle: { width: 3 }
-  }]
-});
-
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function(e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    // Close mobile menu if open
-    document.getElementById('mobile-menu').classList.add('hidden');
-  });
+window.addEventListener('resize', () => {
+  chartPrice.resize();
+  chartCapacity.resize();
 });
 
 // Toggle detail panels
 function toggleDetail(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  const isHidden = el.classList.contains('hidden');
-  if (isHidden) {
-    el.classList.remove('hidden');
-    el.classList.add('animate-fade-in');
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } else {
-    el.classList.add('hidden');
-  }
+  el.classList.toggle('active');
 }
 
 // Toggle table/cards view
-function toggleView(view) {
+function toggleView() {
+  const checkbox = document.getElementById('switch-table');
   const cards = document.getElementById('view-cards');
   const table = document.getElementById('view-table');
-  if (!cards || !table) return;
-  if (view === 'table') {
-    const checkbox = document.getElementById('switch-table');
-    if (checkbox && checkbox.checked) {
-      cards.classList.add('hidden');
-      table.classList.remove('hidden');
-      table.classList.add('animate-fade-in');
-    } else {
-      table.classList.add('hidden');
-      cards.classList.remove('hidden');
-      cards.classList.add('animate-fade-in');
-    }
+  if (checkbox.checked) {
+    cards.style.display = 'none';
+    table.style.display = 'block';
+  } else {
+    table.style.display = 'none';
+    cards.style.display = 'block';
   }
 }
 
@@ -1058,38 +637,12 @@ function toggleView(view) {
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.classList.add('animate-fade-in');
-      observer.unobserve(entry.target);
+      entry.target.classList.add('visible');
     }
   });
 }, { threshold: 0.1 });
 
-document.querySelectorAll('.card-hover').forEach(el => observer.observe(el));
-
-// Handle subscribe
-function handleSubscribe() {
-  const email = document.getElementById('subscribe-email').value;
-  const msg = document.getElementById('subscribe-msg');
-  if (!email || !email.includes('@')) {
-    msg.textContent = '请输入有效的邮箱地址';
-    msg.className = 'text-sm mt-4 text-rose-400';
-    return;
-  }
-  msg.textContent = '订阅成功！感谢您的关注，我们将及时推送最新动态。';
-  msg.className = 'text-sm mt-4 text-emerald-400';
-  document.getElementById('subscribe-email').value = '';
-  setTimeout(() => {
-    msg.textContent = '';
-    msg.className = 'text-sm mt-4 text-slate-500';
-  }, 5000);
-}
-
-window.addEventListener('resize', () => {
-  chartCapacity.resize();
-  chartTrading.resize();
-  chartApproval.resize();
-  chartHours.resize();
-});
+document.querySelectorAll('.animate-fade-in').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
