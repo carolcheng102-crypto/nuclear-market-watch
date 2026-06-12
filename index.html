@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>核市观 - 核电电力市场政策解读与数据分析平台</title>
+<meta name="description" content="核市观是国内领先的核电电力市场信息平台，专注核电电力市场政策解读、市场交易数据分析与行业深度研究，覆盖江苏、福建、广东、浙江等核电省份的政策法规及国际核电动态。">
+<meta name="keywords" content="核电,电力市场,核电政策,电力交易,核电装机,核电入市,容量电价,电力现货,中长期交易,核电市场">
+<meta name="author" content="核市观 Nuclear Market Watch">
+<meta property="og:title" content="核市观 - 核电电力市场政策解读与数据分析平台">
+<meta property="og:description" content="核市观是国内领先的核电电力市场信息平台，专注核电电力市场政策解读、市场交易数据分析与行业深度研究。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E☢%3C/text%3E%3C/svg%3E">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style type="text/tailwindcss">
+@layer base {
+  :root {
+    --primary: #0f172a;
+    --accent: #0ea5e9;
+    --accent-glow: rgba(14,165,233,0.15);
+    --surface: rgba(15,23,42,0.6);
+    --border: rgba(148,163,184,0.1);
+  }
+  body {
+    background: #0a0b0c;
+    color: #e2e8f0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0b0c; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+}
+@layer components {
+  .glass {
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+  }
+  .glow-border {
+    position: relative;
+  }
+  .glow-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(14,165,233,0.3), transparent 40%, transparent 60%, rgba(14,165,233,0.1));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .text-gradient {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgba(14,165,233,0.15);
+    border-color: rgba(14,165,233,0.3);
+  }
+  .tag {
+    @apply px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  .tag-blue { @apply bg-sky-500/10 text-sky-400 border border-sky-500/20; }
+  .tag-green { @apply bg-emerald-500/10 text-emerald-400 border border-emerald-500/20; }
+  .tag-amber { @apply bg-amber-500/10 text-amber-400 border border-amber-500/20; }
+  .tag-rose { @apply bg-rose-500/10 text-rose-400 border border-rose-500/20; }
+}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 glass border-b border-slate-800/50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">☢</span>
+        <div>
+          <h1 class="text-lg font-bold text-white tracking-tight">核市观</h1>
+          <p class="text-[10px] text-slate-400 -mt-1">Nuclear Market Watch</p>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-8 text-sm text-slate-300">
+        <a href="#overview" class="hover:text-sky-400 transition-colors">市场概览</a>
+        <a href="#data" class="hover:text-sky-400 transition-colors">核心数据</a>
+        <a href="#policy" class="hover:text-sky-400 transition-colors">政策解读</a>
+        <a href="#provinces" class="hover:text-sky-400 transition-colors">省份动态</a>
+        <a href="#analysis" class="hover:text-sky-400 transition-colors">深度分析</a>
+      </div>
+      <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden text-slate-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden glass border-t border-slate-800/50">
+    <div class="px-4 py-3 space-y-2 text-sm text-slate-300">
+      <a href="#overview" class="block py-2 hover:text-sky-400">市场概览</a>
+      <a href="#data" class="block py-2 hover:text-sky-400">核心数据</a>
+      <a href="#policy" class="block py-2 hover:text-sky-400">政策解读</a>
+      <a href="#provinces" class="block py-2 hover:text-sky-400">省份动态</a>
+      <a href="#analysis" class="block py-2 hover:text-sky-400">深度分析</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 px-4 overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.08),transparent_50%)]"></div>
+  <div class="max-w-7xl mx-auto relative">
+    <div class="text-center max-w-3xl mx-auto animate-fade-in">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-sm mb-6">
+        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+        数据实时更新至 2026年6月
+      </div>
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+        <span class="text-gradient">核电电力市场</span><br>
+        <span class="text-white">政策解读与数据分析平台</span>
+      </h1>
+      <p class="text-lg text-slate-400 mb-8 leading-relaxed">
+        聚焦中国核电入市进程，追踪电力中长期交易、现货市场、容量电价机制等核心政策，
+        覆盖江苏、福建、广东、浙江等核电大省的电力市场动态。
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="#data" class="px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white rounded-lg font-medium transition-all shadow-lg shadow-sky-500/20">
+          查看核心数据
+        </a>
+        <a href="#policy" class="px-6 py-3 glass text-slate-300 hover:text-white rounded-lg font-medium transition-all hover:border-sky-500/30">
+          政策解读
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Metrics -->
+<section id="overview" class="py-16 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="text-slate-400 text-sm mb-1">全国在运核电机组</div>
+        <div class="text-3xl font-bold text-white">58<span class="text-lg text-slate-500">台</span></div>
+        <div class="text-emerald-400 text-xs mt-2">+1台（2025年新增）</div>
+      </div>
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="text-slate-400 text-sm mb-1">核电总装机容量</div>
+        <div class="text-3xl font-bold text-white">6,100<span class="text-lg text-slate-500">万kW</span></div>
+        <div class="text-emerald-400 text-xs mt-2">同比 +7.6%</div>
+      </div>
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="text-slate-400 text-sm mb-1">2025年核准机组</div>
+        <div class="text-3xl font-bold text-white">10<span class="text-lg text-slate-500">台</span></div>
+        <div class="text-emerald-400 text-xs mt-2">连续4年核准10台+</div>
+      </div>
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="text-slate-400 text-sm mb-1">中国核电发电量</div>
+        <div class="text-3xl font-bold text-white">2,444<span class="text-lg text-slate-500">亿kWh</span></div>
+        <div class="text-emerald-400 text-xs mt-2">2025年全年 +12.98%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Core Data Visualization -->
+<section id="data" class="py-16 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
+      <h2 class="text-2xl font-bold text-white">核心数据可视化</h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="glass rounded-xl p-6 glow-border">
+        <h3 class="text-lg font-semibold text-white mb-4">中国核电装机容量增长趋势</h3>
+        <div id="chart-capacity" class="w-full h-72"></div>
+      </div>
+      <div class="glass rounded-xl p-6 glow-border">
+        <h3 class="text-lg font-semibold text-white mb-4">各省核电中长期交易电量（2026年）</h3>
+        <div id="chart-trading" class="w-full h-72"></div>
+      </div>
+      <div class="glass rounded-xl p-6 glow-border">
+        <h3 class="text-lg font-semibold text-white mb-4">2019-2025年核电机组核准情况</h3>
+        <div id="chart-approval" class="w-full h-72"></div>
+      </div>
+      <div class="glass rounded-xl p-6 glow-border">
+        <h3 class="text-lg font-semibold text-white mb-4">核电利用小时数变化</h3>
+        <div id="chart-hours" class="w-full h-72"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Policy Section -->
+<section id="policy" class="py-16 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
+      <h2 class="text-2xl font-bold text-white">政策解读</h2>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Policy Card 1 -->
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="tag tag-blue">最新</span>
+          <span class="text-xs text-slate-500">2025.12</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">电力中长期市场基本规则</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          国家发改委、国家能源局联合印发，要求2026年3月1日前报各地实施细则备案。明确核电等电源参与中长期市场的交易、结算、价格形成机制。
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="tag tag-amber">中长期交易</span>
+          <span class="tag tag-amber">结算规则</span>
+        </div>
+      </div>
+      <!-- Policy Card 2 -->
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="tag tag-green">Capacity</span>
+          <span class="text-xs text-slate-500">2026</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">发电侧容量电价机制</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          发改价格〔2026〕114号文提出"电力现货市场连续运行后，适时建立可靠容量补偿机制"。核电在提供可靠容量方面具有优势，未来容量补偿将更有利于保障核电成本回收。
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="tag tag-amber">容量电价</span>
+          <span class="tag tag-amber">现货市场</span>
+        </div>
+      </div>
+      <!-- Policy Card 3 -->
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="tag tag-rose">入市</span>
+          <span class="text-xs text-slate-500">2025.10</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">核电市场化交易改革</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          核电入市持续推进，辽宁率先建立核电可持续发展价格结算机制。江苏、福建、广东等核电大省纷纷出台2026年核电入市方案，核电市场化交易进入"深水区"。
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="tag tag-amber">核电入市</span>
+          <span class="tag tag-amber">价格机制</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Province Details -->
+<section id="provinces" class="py-16 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
+      <h2 class="text-2xl font-bold text-white">核电大省电力市场动态</h2>
+    </div>
+    <div class="space-y-4">
+      <!-- 广东 -->
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="flex flex-col md:flex-row md:items-start gap-4">
+          <div class="md:w-32 flex-shrink-0">
+            <div class="text-2xl font-bold text-sky-400">广东</div>
+            <div class="text-xs text-slate-500">核电第一大省</div>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag tag-blue">岭澳/阳江核电</span>
+              <span class="tag tag-amber">2026年市场化电量312亿kWh</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              2026年安排岭澳、阳江核电年度市场化电量约312亿千瓦时，较去年提高39亿千瓦时，并设为最终交易上限。
+              <strong class="text-sky-400">核电不再执行变动成本补偿机制</strong>，2026年仍对核电应用政府授权单向价差合约机制，
+              授权合约电量为核电当月实际市场电量的90%，合约价格为核电核定上网电价不变。预计此变化将为广东核电带来收入提升约4-10亿元。
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- 福建 -->
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="flex flex-col md:flex-row md:items-start gap-4">
+          <div class="md:w-32 flex-shrink-0">
+            <div class="text-2xl font-bold text-sky-400">福建</div>
+            <div class="text-xs text-slate-500">福清/宁德/漳州</div>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag tag-blue">福清/宁德/漳州核电</span>
+              <span class="tag tag-amber">2026年交易电量700-800亿kWh</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              2026年福建省电力中长期市场交易方案明确：福清、宁德、漳州核电全部参与中长期市场，核电交易电量预测为<strong class="text-sky-400">700-800亿千瓦时</strong>，
+              其中参与双边协商交易电量原则上不超过160亿千瓦时。10kV及以上工商业用户原则上全部直接参与市场交易。
+              现货市场运行期间，批发用户按照市场化交易形成的分时电价执行。
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- 江苏 -->
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="flex flex-col md:flex-row md:items-start gap-4">
+          <div class="md:w-32 flex-shrink-0">
+            <div class="text-2xl font-bold text-sky-400">江苏</div>
+            <div class="text-xs text-slate-500">田湾核电</div>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag tag-blue">田湾核电</span>
+              <span class="tag tag-amber">2026年市场化电量300亿kWh</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              2026年纳入市场化交易的核电电量为<strong class="text-sky-400">300亿千瓦时</strong>，与2025年保持不变。
+              剩余200多亿千瓦时发电量仍按政府核定价执行，表明江苏对核电采取一定保护措施。
+              <strong class="text-sky-400">核电机组中长期交易价格不设限制</strong>。
+              火电容量电价由2025年的100元/kW·年上涨至2026年的165元/kW·年。
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- 浙江 -->
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="flex flex-col md:flex-row md:items-start gap-4">
+          <div class="md:w-32 flex-shrink-0">
+            <div class="text-2xl font-bold text-sky-400">浙江</div>
+            <div class="text-xs text-slate-500">秦山/三门核电</div>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag tag-blue">秦山/三门核电</span>
+              <span class="tag tag-amber">50%中长期/10%现货/40%合约</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              《2026年浙江省电力市场化交易方案》：统调核电<strong class="text-sky-400">50%电量中长期，10%现货，40%政府授权合约</strong>。
+              中长期电量不低于90%，年度不低于70%，其余参与现货。核电价格仍由市场决定，零售套餐封顶价不超当月零售市场总体参考价的0.6%。
+              浙江通过二级回收机制，即使有峰时高价，电厂也很难赚到用户的钱。
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- 辽宁 -->
+      <div class="glass rounded-xl p-6 card-hover glow-border">
+        <div class="flex flex-col md:flex-row md:items-start gap-4">
+          <div class="md:w-32 flex-shrink-0">
+            <div class="text-2xl font-bold text-sky-400">辽宁</div>
+            <div class="text-xs text-slate-500">红沿河核电</div>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag tag-blue">红沿河核电</span>
+              <span class="tag tag-amber">可持续发展价格结算机制</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              辽宁省发改委发布《2026年辽宁省核电机组参与电力市场化交易有关事项的通知》，
+              <strong class="text-sky-400">建立核电可持续发展价格结算机制</strong>，
+              保障核电机组平稳参与电力市场。制定了分时段的机制电量配置政策，在保障核电可持续发展的同时，给市场价格发现留下空间。
+              这一机制可为其他核电大省提供借鉴。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Deep Analysis -->
+<section id="analysis" class="py-16 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-1 h-8 bg-sky-500 rounded-full"></div>
+      <h2 class="text-2xl font-bold text-white">深度分析</h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="glass rounded-xl p-6 glow-border">
+        <h3 class="text-lg font-semibold text-white mb-3">核电入市进程分析</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          2026年是核电入市的关键年份。广东核电不再执行变动成本补偿机制，市场化交易电量上升；
+          福建核电全部进入中长期市场；辽宁建立核电可持续发展价格结算机制。
+          核电市场化交易改革已迈进"深水区"，各省份政策差异化明显。
+        </p>
+        <div class="border-t border-slate-700/50 pt-3">
+          <div class="text-xs text-slate-500 mb-1">关键趋势</div>
+          <div class="text-sm text-slate-300">核电低碳价值与绿证、碳市场、容量机制的衔接将是下一步政策优化方向。</div>
+        </div>
+      </div>
+      <div class="glass rounded-xl p-6 glow-border">
+        <h3 class="text-lg font-semibold text-white mb-3">"十五五"核电增长展望</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          2019-2025年累计核准机组56台，2025年已核准10台。中国核电当前控股在运机组27台、装机2621.2万千瓦；
+          在建及核准待建机组18台、装机2067.5万千瓦。2026-2029年预计投产机组数量分别为2/4/2/3台，密集投产期临近。
+        </p>
+        <div class="border-t border-slate-700/50 pt-3">
+          <div class="text-xs text-slate-500 mb-1">装机预测</div>
+          <div class="text-sm text-slate-300">预计2030/2035年核电发电量占比达8%/10%，"十五五"年核准需维持8台以上。</div>
+        </div>
+      </div>
+      <div class="glass rounded-xl p-6 glow-border">
+        <h3 class="text-lg font-semibold text-white mb-3">核电电价趋势</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          2025年电力行业利润总额创历史新高，但板块内分化显著。新能源与核电受入市推进与供给宽松影响，电价持续下滑导致业绩承压。
+          预计2026年为电力市场"试错"与"过渡"年份，后续有望在供需边际改善与市场机制成熟过程中，推动各电源获取应有回报率。
+        </p>
+        <div class="border-t border-slate-700/50 pt-3">
+          <div class="text-xs text-slate-500 mb-1">价格展望</div>
+          <div class="text-sm text-slate-300">市场化交易电价下行压力仍存，但容量电价机制完善有望对冲部分影响。</div>
+        </div>
+      </div>
+      <div class="glass rounded-xl p-6 glow-border">
+        <h3 class="text-lg font-semibold text-white mb-3">国际核电动态</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          全球核电复苏加速。2024年中国在运和核准在建核电机组数量达到102台，装机规模跃升至1.13亿千瓦，
+          成功登顶世界核电大国之列。核技术应用产业高质量发展三年行动方案（2024-2026年）提出，
+          到2026年核技术应用产业年直接经济产值达4000亿元。
+        </p>
+        <div class="border-t border-slate-700/50 pt-3">
+          <div class="text-xs text-slate-500 mb-1">全球地位</div>
+          <div class="text-sm text-slate-300">中国从核电大国向核电强国稳步迈进，核电成为能源安全的关键支撑。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-slate-800/50 py-12 px-4 mt-16">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">☢</span>
+        <div>
+          <h3 class="text-lg font-bold text-white">核市观</h3>
+          <p class="text-xs text-slate-500">Nuclear Market Watch</p>
+        </div>
+      </div>
+      <div class="text-slate-500 text-sm text-center md:text-right">
+        <p>数据来源：中国核电公告、国家发改委、国家能源局、各省发改委、电力交易中心</p>
+        <p class="mt-1">数据更新日期：2026年6月12日</p>
+      </div>
+    </div>
+    <div class="mt-8 pt-8 border-t border-slate-800/50 text-center text-slate-600 text-xs">
+      <p>本站信息仅供参考，不构成投资建议。市场有风险，决策需谨慎。</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Chart: Capacity Growth
+const chartCapacity = echarts.init(document.getElementById('chart-capacity'));
+chartCapacity.setOption({
+  backgroundColor: 'transparent',
+  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
+  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+  xAxis: { type: 'category', data: ['2019','2020','2021','2022','2023','2024','2025M9'], axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' } },
+  yAxis: { type: 'value', name: '万kW', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#1e293b' } } },
+  series: [{
+    name: '核电装机容量',
+    type: 'line',
+    data: [4874, 4989, 5326, 5553, 5691, 5943, 6100],
+    smooth: true,
+    itemStyle: { color: '#0ea5e9' },
+    areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(14,165,233,0.3)' }, { offset: 1, color: 'rgba(14,165,233,0)' }] } },
+    lineStyle: { width: 3 }
+  }]
+});
+
+// Chart: Trading Volume by Province
+const chartTrading = echarts.init(document.getElementById('chart-trading'));
+chartTrading.setOption({
+  backgroundColor: 'transparent',
+  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
+  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+  xAxis: { type: 'value', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#1e293b' } } },
+  yAxis: { type: 'category', data: ['辽宁','浙江','江苏','福建','广东'], axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' } },
+  series: [{
+    name: '2026年市场化交易电量',
+    type: 'bar',
+    data: [80, 150, 300, 750, 312],
+    itemStyle: {
+      color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#0ea5e9' }, { offset: 1, color: '#22d3ee' }] },
+      borderRadius: [0, 4, 4, 0]
+    },
+    label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c}亿kWh' }
+  }]
+});
+
+// Chart: Approval History
+const chartApproval = echarts.init(document.getElementById('chart-approval'));
+chartApproval.setOption({
+  backgroundColor: 'transparent',
+  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
+  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+  xAxis: { type: 'category', data: ['2019','2020','2021','2022','2023','2024','2025'], axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' } },
+  yAxis: { type: 'value', name: '台', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#1e293b' } } },
+  series: [{
+    name: '核准机组',
+    type: 'bar',
+    data: [6, 4, 5, 10, 10, 11, 10],
+    itemStyle: {
+      color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#22d3ee' }, { offset: 1, color: '#0ea5e9' }] },
+      borderRadius: [4, 4, 0, 0]
+    },
+    label: { show: true, position: 'top', color: '#e2e8f0' }
+  }]
+});
+
+// Chart: Utilization Hours
+const chartHours = echarts.init(document.getElementById('chart-hours'));
+chartHours.setOption({
+  backgroundColor: 'transparent',
+  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
+  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+  xAxis: { type: 'category', data: ['2020','2021','2022','2023','2024','2025M1-9'], axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' } },
+  yAxis: { type: 'value', name: '小时', min: 7000, axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#1e293b' } } },
+  series: [{
+    name: '利用小时数',
+    type: 'line',
+    data: [7453, 7778, 7656, 7670, 7683, 5800],
+    smooth: true,
+    itemStyle: { color: '#10b981' },
+    areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(16,185,129,0.2)' }, { offset: 1, color: 'rgba(16,185,129,0)' }] } },
+    lineStyle: { width: 3 }
+  }]
+});
+
+window.addEventListener('resize', () => {
+  chartCapacity.resize();
+  chartTrading.resize();
+  chartApproval.resize();
+  chartHours.resize();
+});
+</script>
+</body>
+</html>
